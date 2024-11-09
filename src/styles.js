@@ -4,6 +4,8 @@ export const AppContainer = styled.div`
     display: flex;
     height: 100vh;
     background-color: #f5f8fa;
+    overflow-y: auto;
+    
 `;
 
 export const SidebarContainer = styled.div`
