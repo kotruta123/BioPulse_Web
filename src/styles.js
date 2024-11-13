@@ -19,7 +19,7 @@ export const SidebarContainer = styled.div`
 
 export const Container = styled.div`
     padding: 20px;
-    max-width: 800px;
+    max-width: 1000px;
     margin: 0 auto;
     background-color: #ffffff;
     border-radius: 8px;

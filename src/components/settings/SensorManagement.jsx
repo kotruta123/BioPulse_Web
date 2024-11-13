@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useSensorService } from '../services/SensorService';
-import { Form, Input, Button, Container } from '../styles';
+import { useSensorService } from '../../services/SensorService.jsx';
+import { Form, Input, Button, Container } from '../../styles.js';
 
 const SensorManagement = () => {
     const { sensors, addSensor } = useSensorService();

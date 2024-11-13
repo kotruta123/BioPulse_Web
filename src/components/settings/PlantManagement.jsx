@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { usePlantService } from '../services/PlantService';
-import { Form, Input, Button, Container } from '../styles';
+import { usePlantService } from '../../services/PlantService.jsx';
+import { Form, Input, Button, Container } from '../../styles.js';
 
 const PlantManagement = () => {
     const { plantProfiles, addPlantProfile } = usePlantService();

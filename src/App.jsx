@@ -7,19 +7,20 @@ import { NotificationServiceProvider } from './services/NotificationService';
 import { CameraServiceProvider } from './services/CameraService';
 import { BackupServiceProvider } from './services/BackupService';
 
-// Import all components used in routing
+// Import pages and components
 import Dashboard from './components/Dashboard';
 import SwitchCard from './auth/SwitchCard';
-import PlantManagement from './components/PlantManagement';
-import SensorManagement from './components/SensorManagement';
-import CameraSettings from './components/CameraSettings';
-import NotificationsSettings from './components/NotificationsSettings';
+import ProtectedLayout from "./components/ProtectedLayout.jsx";
+import PlantManagement from "./components/settings/PlantManagement.jsx";
+import SensorManagement from "./components/settings/SensorManagement.jsx";
+import CameraSettings from "./components/settings/CameraSettings.jsx";
+import NotificationsSettings from "./components/settings/NotificationsSettings.jsx";
 import BackupRestore from './components/BackupRestore';
 import DataExport from './components/DataExport';
 
 // Protected Route Wrapper to enforce authentication
 const ProtectedRoute = ({ children }) => {
-    const { isAuthenticated } = useAuth(); // Make sure useAuth is imported and used here
+    const { isAuthenticated } = useAuth();
     return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
@@ -33,66 +34,25 @@ function App() {
                             <BackupServiceProvider>
                                 <Router>
                                     <Routes>
-                                        {/* Public Routes */}
+                                        {/* Public Route for Login and Register */}
                                         <Route path="/login" element={<SwitchCard />} />
 
-                                        {/* Protected Routes */}
+                                        {/* Protected Routes within ProtectedLayout */}
                                         <Route
-                                            path="/dashboard"
                                             element={
                                                 <ProtectedRoute>
-                                                    <Dashboard />
+                                                    <ProtectedLayout />
                                                 </ProtectedRoute>
                                             }
-                                        />
-                                        <Route
-                                            path="/plant-management"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <PlantManagement />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="/sensor-management"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <SensorManagement />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="/camera-settings"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <CameraSettings />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="/notifications"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <NotificationsSettings />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="/backup"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <BackupRestore />
-                                                </ProtectedRoute>
-                                            }
-                                        />
-                                        <Route
-                                            path="/data-export"
-                                            element={
-                                                <ProtectedRoute>
-                                                    <DataExport />
-                                                </ProtectedRoute>
-                                            }
-                                        />
+                                        >
+                                            <Route path="/dashboard" element={<Dashboard />} />
+                                            <Route path="/plant-management" element={<PlantManagement />} />
+                                            <Route path="/sensor-management" element={<SensorManagement />} />
+                                            <Route path="/camera-settings" element={<CameraSettings />} />
+                                            <Route path="/notifications" element={<NotificationsSettings />} />
+                                            <Route path="/backup" element={<BackupRestore />} />
+                                            <Route path="/data-export" element={<DataExport />} />
+                                        </Route>
 
                                         {/* Redirect all other routes to login */}
                                         <Route path="*" element={<Navigate to="/login" />} />

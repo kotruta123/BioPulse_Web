@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useCameraService } from '../services/CameraService';
-import { Form, Input, Button, Container } from '../styles';
+import { useCameraService } from '../../services/CameraService.jsx';
+import { Form, Input, Button, Container } from '../../styles.js';
 
 const CameraSettings = () => {
     const { configureCamera } = useCameraService();

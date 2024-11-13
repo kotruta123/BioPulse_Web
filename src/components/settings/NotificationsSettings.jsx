@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import { useNotificationService } from '../services/NotificationService';
-import { Form, Input, Button, Container } from '../styles';
+import { useNotificationService } from '../../services/NotificationService.jsx';
+import { Form, Input, Button, Container } from '../../styles.js';
 
 const NotificationsSettings = () => {
     const { configureNotification } = useNotificationService();

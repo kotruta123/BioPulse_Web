@@ -7,7 +7,6 @@ import { AppContainer, MainContent } from "../styles.js";
 const Dashboard = () => {
     return (
         <AppContainer>
-            <Sidebar />
             <MainContent>
                 <Header />
                 <DashboardContent />
