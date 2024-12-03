@@ -15,7 +15,6 @@ import {
 } from '@mui/icons-material';
 
 import Avatar from '@mui/material/Avatar';
-import {Link} from "@mui/material";
 
 const Sidebar = () => (
     <SidebarContainer>
