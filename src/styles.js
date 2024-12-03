@@ -18,6 +18,15 @@ export const SidebarContainer = styled.div`
     padding: 20px 0;
 `;
 
+export const Container = styled.div`
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
 export const IconButton = styled.div`
     margin: 15px 0;
     width: 50px;
@@ -223,11 +232,6 @@ export const LoginContainer = styled.div`
 
 
 
-export const ErrorMessage = styled.p`
-    color: red;
-    font-size: 14px;
-`;
-
 export const Background = styled.div`
     display: flex;
     align-items: center;
@@ -275,8 +279,7 @@ export const CardFront = styled.div`
 `;
 
 export const CardBack = styled(CardFront)`
-    transform: rotateY(180deg); 
-    backface-visibility: hidden;
+    transform: rotateY(180deg);
 `;
 
 export const ToggleButton = styled.button`
@@ -329,6 +332,7 @@ export const Button = styled.button`
         background-color: #0056b3;
     }
 `;
+
 
 export const RefreshButton = styled.button`
     background-color: #007bff;

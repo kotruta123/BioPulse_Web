@@ -1,5 +1,7 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { SidebarContainer, IconButton, AvatarContainer, ActiveIconButton } from '../styles';
+
 import {
     Home,
     Power,
@@ -11,6 +13,7 @@ import {
     CameraAlt,
     Notifications
 } from '@mui/icons-material';
+
 import Avatar from '@mui/material/Avatar';
 import {Link} from "@mui/material";
 
@@ -18,7 +21,7 @@ const Sidebar = () => (
     <SidebarContainer>
 
         <ActiveIconButton><Link to="/dashboard"><Home /></Link></ActiveIconButton>
-            <IconButton><Link to="/plant-management"><Nature /></Link></IconButton>
+        <IconButton><Link to="/plant-management"><Nature /></Link></IconButton>
         <IconButton><Link to="/sensor-management"><Water /></Link></IconButton>
         <IconButton><Link to="/camera-settings"><CameraAlt /></Link></IconButton>
         <IconButton><Link to="/notifications"><Notifications /></Link></IconButton>
