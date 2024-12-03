@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 
+
 export const AppContainer = styled.div`
     display: flex;
     height: 100vh;
@@ -15,6 +16,15 @@ export const SidebarContainer = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
+`;
+
+export const Container = styled.div`
+    padding: 20px;
+    max-width: 1000px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
 export const IconButton = styled.div`
@@ -90,36 +100,23 @@ export const PlantAndCarouselRow = styled.div`
     gap: 20px;
 `;
 
-export const PlantGrid = styled.div`
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 10px;
-    flex: 2;
-`;
 
 export const PlantCardContainer = styled.div`
     position: relative;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
     align-items: center;
+    justify-content: center;
     background-color: white;
     border-radius: 12px;
     overflow: hidden;
+    width: 220px;
     height: 180px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    ${({ isActive }) => isActive && `
-        border: 2px solid #33d69f;
-    `}
-    &:hover > div {
-        opacity: 1;
+    ${({ isActive }) => isActive && `border: 2px solid #33d69f;`}
+    &:hover .MuiSvgIcon-root {
+        display: block;
     }
-`;
-
-export const PlantImage = styled.img`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 8px;
 `;
 
 export const PlantOverlay = styled.div`
@@ -136,7 +133,37 @@ export const PlantOverlay = styled.div`
     color: white;
     opacity: 0;
     transition: opacity 0.3s ease;
+    &:hover {
+        opacity: 1;
+    }
 `;
+
+export const EditIcon = styled.div`
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  color: white;
+`;
+
+
+export const PlantGrid = styled.div`
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr)); /* Dynamic columns */
+    gap: 15px; /* Reduce gap between items */
+    padding: 20px;
+`;
+
+
+
+export const PlantImage = styled.img`
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+`;
+
 
 export const PlantTitle = styled.h3`
     font-size: 14px;
@@ -186,21 +213,6 @@ export const SensorStatus = styled.span`
     margin-top: 5px;
 `;
 
-export const CarouselContainer = styled.div`
-    flex: 1.5; 
-    border-radius: 12px;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-    height: 370px; 
-`;
-
-export const CarouselImage = styled.img`
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 12px;
-`;
-
 
 export const ChartContainer = styled.div`
     background-color: white;
@@ -208,7 +220,7 @@ export const ChartContainer = styled.div`
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
-//
+
 export const LoginContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -219,11 +231,6 @@ export const LoginContainer = styled.div`
 `;
 
 
-
-export const ErrorMessage = styled.p`
-    color: red;
-    font-size: 14px;
-`;
 
 export const Background = styled.div`
     display: flex;
@@ -272,8 +279,7 @@ export const CardFront = styled.div`
 `;
 
 export const CardBack = styled(CardFront)`
-    transform: rotateY(180deg); 
-    backface-visibility: hidden;
+    transform: rotateY(180deg);
 `;
 
 export const ToggleButton = styled.button`
@@ -325,5 +331,54 @@ export const Button = styled.button`
     &:hover {
         background-color: #0056b3;
     }
+`;
+
+
+export const RefreshButton = styled.button`
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
+
+export const CarouselWrapper = styled.div`
+    width: 80%;
+    margin: 0 auto;
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+export const CarouselTitle = styled.h2`
+    font-size: 18px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 10px;
+    color: #333;
+`;
+
+export const CarouselContainer = styled.div`
+    width: 100%;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+`;
+
+export const CarouselImage = styled.img`
+    width: 100%;
+    height: 550px; /* Adjust height to fit your layout */
+    object-fit: cover;
+    border-radius: 8px;
 `;
 

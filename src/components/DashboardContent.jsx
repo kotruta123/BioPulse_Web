@@ -1,36 +1,77 @@
-import React from 'react';
-import PlantCard from './PlantCard';
-import SensorCard from './SensorCard';
-import ElectricityConsumptionChart from './ElectricityConsumption.jsx';
-import ImageCarousel from './ImageCarousel';
-import { ContentContainer, PlantAndCarouselRow, PlantGrid, SensorGrid, ChartContainer } from '../styles';
+import React, { useState } from "react";
+import SensorCard from "./SensorCard";
+import StyledGaugeChart from "./StyledGaugeChart";
+import ImageCarousel from "./ImageCarousel";
+import { SensorGrid, RefreshButton, ContentContainer } from "../styles";
+import RefreshIcon from "@mui/icons-material/Refresh";
 
-const DashboardContent = () => (
-    <ContentContainer>
-        <PlantAndCarouselRow>
-            <PlantGrid>
-                <PlantCard title="Cabbage" status="Active" imageUrl="/images/cabbage.jpg" isActive />
-                <PlantCard title="Tomato" imageUrl="/images/tomato.jpg" />
-                <PlantCard title="Lettuce" imageUrl="/images/lettuce.jpg" />
-                <PlantCard title="Basil" imageUrl="/images/basil.jpg" />
-                <PlantCard title="Spinach" imageUrl="/images/spinach.jpg" />
-                <PlantCard title="Strawberry" imageUrl="/images/strawberry.jpg" />
-            </PlantGrid>
+const DashboardContent = () => {
+    const [data, setData] = useState({
+        temp: 35.65,
+        ph: 7.8,
+        ec: 677.64,
+    });
+
+    const handleRefresh = () => {
+        setData({
+            temp: Math.random() * 50,
+            ph: (Math.random() * 14).toFixed(2),
+            ec: Math.random() * 1000,
+        });
+    };
+
+    return (
+        <ContentContainer>
+            <div style={{ textAlign: "right", padding: "10px" }}>
+                <RefreshButton onClick={handleRefresh}>
+                    <RefreshIcon /> Refresh
+                </RefreshButton>
+            </div>
+            <SensorGrid>
+                <div>
+                    <SensorCard
+                        title="Temp"
+                        value={`${data.temp.toFixed(2)}°C`}
+                        status="Moderate"
+                    />
+                    <StyledGaugeChart
+                        title="Temperature"
+                        value={data.temp}
+                        maxValue={50}
+                        unit="°C"
+                    />
+                </div>
+                <div>
+                    <SensorCard
+                        title="pH"
+                        value={data.ph}
+                        status="Good"
+                    />
+                    <StyledGaugeChart
+                        title="pH Levels"
+                        value={parseFloat(data.ph)}
+                        maxValue={14}
+                        unit=""
+                    />
+                </div>
+                <div>
+                    <SensorCard
+                        title="Water EC"
+                        value={`${data.ec.toFixed(2)} μS/cm`}
+                        status="Bad"
+                    />
+                    <StyledGaugeChart
+                        title="Water EC"
+                        value={data.ec}
+                        maxValue={1000}
+                        unit="μS/cm"
+                    />
+                </div>
+            </SensorGrid>
             <ImageCarousel />
-        </PlantAndCarouselRow>
+        </ContentContainer>
 
-        <SensorGrid>
-            <SensorCard title="Humidity" value="72%" status="Good" />
-            <SensorCard title="Temp" value="31°C" status="Moderate" />
-            <SensorCard title="Water EC" value="250 μS/cm" status="Bad" />
-            <SensorCard title="pH" value="7.9" status="Good" />
-            <SensorCard title="Light" value="9800 lux" status="Good" />
-        </SensorGrid>
-
-        <ChartContainer>
-            <ElectricityConsumptionChart />
-        </ChartContainer>
-    </ContentContainer>
-);
+    );
+};
 
 export default DashboardContent;
