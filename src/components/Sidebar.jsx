@@ -1,7 +1,18 @@
 import React from 'react';
 import { SidebarContainer, IconButton, AvatarContainer, ActiveIconButton } from '../styles';
-import {Home, Power, HelpOutline, Water, Description} from '@mui/icons-material';
+import {
+    Home,
+    Power,
+    HelpOutline,
+    Water,
+    Description,
+    Backup,
+    Nature,
+    CameraAlt,
+    Notifications
+} from '@mui/icons-material';
 import Avatar from '@mui/material/Avatar';
+import {Link} from "@mui/material";
 
 const Sidebar = () => (
     <SidebarContainer>
