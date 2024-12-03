@@ -13,9 +13,6 @@ const SwitchCard = () => {
                     <CardInner>
                         <CardFront>
                             <Login />
-                            <ToggleButton onClick={() => setIsLogin(false)}>
-                                Go to Register
-                            </ToggleButton>
                         </CardFront>
                         <CardBack>
                             <Register />
