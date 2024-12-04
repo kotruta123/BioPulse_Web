@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from './AuthContext';
-import { Form, Input, Button } from '../styles';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+import { Form, Input, Button } from "../styles";
 
-const Login = () => {
+const Login = ({ onSwitchToRestore }) => {
     const { login, loginAsGuest } = useAuth();
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
     const handleLogin = (e) => {
         e.preventDefault();
         const success = login(username, password);
         if (success) {
-            navigate('/dashboard');
+            navigate("/dashboard");
         }
     };
 
     const handleGuestLogin = () => {
         loginAsGuest();
-        navigate('/dashboard');
+        navigate("/dashboard");
     };
 
     return (
@@ -40,7 +40,12 @@ const Login = () => {
                 required
             />
             <Button type="submit">Login</Button>
-            <Button type="button" onClick={handleGuestLogin}>Login as Guest</Button>
+            <Button type="button" onClick={handleGuestLogin}>
+                Login as Guest
+            </Button>
+            <Button type="button" onClick={onSwitchToRestore} style={{ color: "red", backgroundColor: "transparent" }}>
+                Forgot Password?
+            </Button>
         </Form>
     );
 };

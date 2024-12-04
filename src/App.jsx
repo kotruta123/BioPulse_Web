@@ -34,7 +34,7 @@ function App() {
                             <BackupServiceProvider>
                                 <Router>
                                     <Routes>
-                                        {/* Public Route for Login and Register */}
+                                        {/* Public Route for Login and RestoreCredentials */}
                                         <Route path="/login" element={<SwitchCard />} />
 
                                         {/* Protected Routes within ProtectedLayout */}

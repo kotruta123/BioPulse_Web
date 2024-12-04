@@ -1,4 +1,5 @@
 
+// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import {
         PlantGrid,
@@ -37,7 +38,6 @@ const PlantManagement = () => {
                         light_cycle: "12 hours",
                         isDefault: true,
                 },
-                // Add more profiles to simulate overflow
                 { id: 3, name: "Lettuce", imageUrl: "/images/lettuce.jpg", isDefault: true },
                 { id: 4, name: "Spinach", imageUrl: "/images/spinach.jpg", isDefault: true },
                 { id: 5, name: "Strawberry", imageUrl: "/images/strawberry.jpg", isDefault: true },
