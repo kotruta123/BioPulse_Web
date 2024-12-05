@@ -3,14 +3,13 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   plugins: [react()],
+  base: '/BioPulse_Web/',
   server: {
     fs: {
-      allow: ['..'] 
-    }
+      allow: ['..'],
+    },
   },
   optimizeDeps: {
-    include: ['slick-carousel']
-  }
-
-  
+    include: ['slick-carousel'],
+  },
 });
