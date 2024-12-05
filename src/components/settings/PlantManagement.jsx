@@ -1,5 +1,3 @@
-
-// eslint-disable-next-line no-unused-vars
 import React, { useState } from "react";
 import {
         PlantGrid,
@@ -20,58 +18,105 @@ const PlantManagement = () => {
                 {
                         id: 1,
                         name: "Cabbage",
-                        status: "Active",
+                        status: "Inactive",
                         imageUrl: "/images/cabbage.jpg",
-                        ph_range: "6.0-7.5",
-                        ec_range: "1.5-2.5",
-                        temp_range: "15-20°C",
-                        light_cycle: "16 hours",
+                        sensors: [
+                                { id: 101, type: "Temperature", range: "18°C - 24°C" },
+                                { id: 102, type: "pH", range: "6.0 - 6.5" },
+                        ],
                         isDefault: true,
                 },
                 {
                         id: 2,
                         name: "Tomato",
+                        status: "Inactive",
                         imageUrl: "/images/tomato.jpg",
-                        ph_range: "5.5-6.5",
-                        ec_range: "2.0-4.0",
-                        temp_range: "20-25°C",
-                        light_cycle: "12 hours",
+                        sensors: [
+                                { id: 201, type: "Light", range: "12 hours/day" },
+                                { id: 202, type: "EC", range: "1.8 - 2.3 mS/cm" },
+                        ],
                         isDefault: true,
                 },
-                { id: 3, name: "Lettuce", imageUrl: "/images/lettuce.jpg", isDefault: true },
-                { id: 4, name: "Spinach", imageUrl: "/images/spinach.jpg", isDefault: true },
-                { id: 5, name: "Strawberry", imageUrl: "/images/strawberry.jpg", isDefault: true },
-                { id: 6, name: "Basil", imageUrl: "/images/basil.jpg", isDefault: true },
+                {
+                        id: 3,
+                        name: "Lettuce",
+                        status: "Inactive",
+                        imageUrl: "/images/lettuce.jpg",
+                        sensors: [
+                                { id: 301, type: "Temperature", range: "15°C - 20°C" },
+                                { id: 302, type: "pH", range: "5.5 - 6.0" },
+                        ],
+                        isDefault: true,
+                },
+                {
+                        id: 4,
+                        name: "Spinach",
+                        status: "Inactive",
+                        imageUrl: "/images/spinach.jpg",
+                        sensors: [
+                                { id: 401, type: "Temperature", range: "16°C - 24°C" },
+                                { id: 402, type: "Light", range: "10 hours/day" },
+                        ],
+                        isDefault: false,
+                },
+                {
+                        id: 5,
+                        name: "Carrot",
+                        status: "Inactive",
+                        imageUrl: "/images/carrot.jpg",
+                        sensors: [
+                                { id: 501, type: "pH", range: "6.0 - 6.8" },
+                                { id: 502, type: "EC", range: "1.6 - 2.2 mS/cm" },
+                        ],
+                        isDefault: false,
+                },
         ]);
 
-        const [newProfile, setNewProfile] = useState({
-                name: "",
-                status: "",
-                ph_range: "",
-                ec_range: "",
-                temp_range: "",
-                light_cycle: "",
-                imageUrl: null,
-        });
 
+        const [newProfile, setNewProfile] = useState({ name: "", imageUrl: null, sensors: [] });
         const [editingProfile, setEditingProfile] = useState(null);
+        const [newSensor, setNewSensor] = useState({ type: "", range: "" });
+        const [showSensorInput, setShowSensorInput] = useState(false);
+        const [errors, setErrors] = useState({});
+        const [isAddingNewPlant, setIsAddingNewPlant] = useState(false);
+
+        const sensorTypes = ["Temperature", "pH", "EC", "Light"];
+
+        const resetForm = () => {
+                setNewProfile({ name: "", imageUrl: null, sensors: [] });
+                setEditingProfile(null);
+                setErrors({});
+        };
 
         const handleEdit = (profile) => {
+                resetForm();
                 setEditingProfile(profile);
-                setNewProfile({ ...profile, imageUrl: null });
+                setNewProfile({ ...profile });
         };
 
         const handleSave = (e) => {
                 e.preventDefault();
-                if (!newProfile.name || !newProfile.imageUrl) return alert("Please fill in all required fields.");
-                const id = Date.now();
-                const updatedProfiles = editingProfile
-                    ? plantProfiles.map((profile) => (profile.id === id ? { ...newProfile, id } : profile))
-                    : [...plantProfiles, { ...newProfile, id, isDefault: false }];
+                let formErrors = {};
+                if (!newProfile.name) formErrors.name = "Plant name is required.";
+                if (!newProfile.imageUrl) formErrors.imageUrl = "Plant image is required.";
 
-                setPlantProfiles(updatedProfiles);
-                setNewProfile({ name: "", status: "", ph_range: "", ec_range: "", temp_range: "", light_cycle: "", imageUrl: null });
-                setEditingProfile(null);
+                if (Object.keys(formErrors).length > 0) {
+                        setErrors(formErrors);
+                        return;
+                }
+
+                if (editingProfile) {
+                        const updatedProfiles = plantProfiles.map((profile) =>
+                            profile.id === editingProfile.id ? { ...newProfile } : profile
+                        );
+                        setPlantProfiles(updatedProfiles);
+                } else {
+                        const newPlant = { ...newProfile, id: Date.now(), isDefault: false };
+                        setPlantProfiles([...plantProfiles, newPlant]);
+                }
+
+                resetForm();
+                setIsAddingNewPlant(false);
         };
 
         const handleImageUpload = (e) => {
@@ -83,86 +128,267 @@ const PlantManagement = () => {
                 }
         };
 
-        const handleDelete = (id) => {
-                setPlantProfiles((prev) => prev.filter((profile) => profile.id !== id));
+        const handleActivate = (id) => {
+                const updatedProfiles = plantProfiles.map((profile) =>
+                    profile.id === id
+                        ? { ...profile, status: "Active" }
+                        : { ...profile, status: "Inactive" }
+                );
+                setPlantProfiles(updatedProfiles);
+        };
+
+        const handleDeleteProfile = (id) => {
+                setPlantProfiles(plantProfiles.filter((profile) => profile.id !== id || profile.isDefault));
+        };
+
+        const handleAddSensor = () => {
+                setShowSensorInput(true);
+        };
+
+        const handleSaveSensor = () => {
+                let formErrors = {};
+                if (!newSensor.type) formErrors.sensorType = "Sensor type is required.";
+                if (!newSensor.min || isNaN(newSensor.min)) formErrors.sensorMin = "Valid minimum value is required.";
+                if (!newSensor.max || isNaN(newSensor.max)) formErrors.sensorMax = "Valid maximum value is required.";
+                if (Object.keys(formErrors).length > 0) {
+                        setErrors(formErrors);
+                        return;
+                }
+                setNewProfile({
+                        ...newProfile,
+                        sensors: [
+                                ...newProfile.sensors,
+                                { ...newSensor, id: Date.now() },
+                        ],
+                });
+                setNewSensor({ type: "", min: "", max: "" });
+                setShowSensorInput(false);
+                setErrors({});
+        };
+
+        const handleDeleteSensor = (id) => {
+                setNewProfile({
+                        ...newProfile,
+                        sensors: newProfile.sensors.filter((sensor) => sensor.id !== id),
+                });
+        };
+
+        const handleAddNewPlant = () => {
+                resetForm();
+                setIsAddingNewPlant(true);
         };
 
         return (
-            <div>
+            <div style={{ padding: "20px" }}>
+                    {/* Plant Profiles */}
                     <PlantGrid>
                             {plantProfiles.map((profile) => (
                                 <PlantCardContainer key={profile.id} isActive={profile.status === "Active"}>
                                         <PlantImage src={profile.imageUrl} alt={profile.name} />
                                         <PlantOverlay>
                                                 <PlantTitle>{profile.name}</PlantTitle>
-                                                <PlantStatus>{profile.status || "Custom Plant"}</PlantStatus>
-                                                {profile.isDefault ? (
-                                                    <EditIcon
-                                                        style={{ cursor: "pointer", marginTop: "10px" }}
-                                                        onClick={() => handleEdit(profile)}
+                                                <PlantStatus>{profile.status || "Inactive"}</PlantStatus>
+                                                <EditIcon
+                                                    style={{ cursor: "pointer", color: "white", marginTop: "10px" }}
+                                                    onClick={() => handleEdit(profile)}
+                                                />
+                                                {!profile.isDefault && (
+                                                    <DeleteIcon
+                                                        style={{ cursor: "pointer", color: "red", marginTop: "10px" }}
+                                                        onClick={() => handleDeleteProfile(profile.id)}
                                                     />
-                                                ) : (
-                                                    <div style={{ marginTop: "10px" }}>
-                                                            <EditIcon
-                                                                style={{ cursor: "pointer", marginRight: "10px" }}
-                                                                onClick={() => handleEdit(profile)}
-                                                            />
-                                                            <DeleteIcon style={{ cursor: "pointer" }} onClick={() => handleDelete(profile.id)} />
-                                                    </div>
                                                 )}
                                         </PlantOverlay>
                                 </PlantCardContainer>
                             ))}
+                            <Button
+                                style={{
+                                        marginTop: "20px",
+                                        fontSize: "18px",
+                                        background: "linear-gradient(to right, #00c6ff, #0072ff)",
+                                        color: "white",
+                                        borderRadius: "10px",
+                                        padding: "15px",
+                                        cursor: "pointer",
+                                        transition: "transform 0.2s ease-in-out",
+                                        boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
+                                }}
+                                onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+                                onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
+                                onClick={handleAddNewPlant}
+                            >
+                                    Add New Plant Profile +
+                            </Button>
                     </PlantGrid>
 
-                    <Form onSubmit={handleSave} style={{ marginTop: "20px" }}>
-                            <h3>{editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}</h3>
-                            <Input
-                                type="text"
-                                placeholder="Plant Name"
-                                value={newProfile.name}
-                                onChange={(e) => setNewProfile({ ...newProfile, name: e.target.value })}
-                                required
-                            />
-                            <Input
-                                type="text"
-                                placeholder="pH Range (e.g., 6.0-7.5)"
-                                value={newProfile.ph_range}
-                                onChange={(e) => setNewProfile({ ...newProfile, ph_range: e.target.value })}
-                            />
-                            <Input
-                                type="text"
-                                placeholder="EC Range (e.g., 1.5-2.5)"
-                                value={newProfile.ec_range}
-                                onChange={(e) => setNewProfile({ ...newProfile, ec_range: e.target.value })}
-                            />
-                            <Input
-                                type="text"
-                                placeholder="Temperature Range (e.g., 15-20°C)"
-                                value={newProfile.temp_range}
-                                onChange={(e) => setNewProfile({ ...newProfile, temp_range: e.target.value })}
-                            />
-                            <Input
-                                type="text"
-                                placeholder="Light Cycle (e.g., 16 hours)"
-                                value={newProfile.light_cycle}
-                                onChange={(e) => setNewProfile({ ...newProfile, light_cycle: e.target.value })}
-                            />
-                            <Input type="file" accept="image/*" onChange={handleImageUpload} />
-                            {newProfile.imageUrl && (
-                                <div style={{ margin: "10px 0" }}>
-                                        <img
-                                            src={newProfile.imageUrl}
-                                            alt="Preview"
-                                            style={{ width: "100px", height: "100px", borderRadius: "8px", objectFit: "cover" }}
-                                        />
-                                </div>
-                            )}
-                            <Button type="submit">{editingProfile ? "Save Changes" : "Add Plant"}</Button>
-                    </Form>
+                    {/* Add/Edit Profile Form */}
+                    {(isAddingNewPlant || editingProfile) && (
+                        <Form style={{ marginTop: "20px", animation: "fadeIn 0.5s ease-in-out" }}>
+                                <h3>{editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}</h3>
+                                <Input
+                                    type="text"
+                                    placeholder="Plant Name"
+                                    value={newProfile.name}
+                                    onChange={(e) => setNewProfile({ ...newProfile, name: e.target.value })}
+                                />
+                                {errors.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>}
+
+                                <h4 style={{ marginTop: "20px" }}>Sensors</h4>
+                                {newProfile.sensors.map((sensor) => (
+                                    <div key={sensor.id} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
+                                            <span style={{ marginRight: "10px", fontWeight: "bold" }}>{sensor.type}</span>
+                                            <Input
+                                                type="text"
+                                                value={sensor.range}
+                                                placeholder="Working Range"
+                                                onChange={(e) =>
+                                                    setNewProfile({
+                                                            ...newProfile,
+                                                            sensors: newProfile.sensors.map((s) =>
+                                                                s.id === sensor.id ? { ...s, range: e.target.value } : s
+                                                            ),
+                                                    })
+                                                }
+                                                style={{
+                                                        flex: "1",
+                                                        marginRight: "10px",
+                                                        borderRadius: "5px",
+                                                        border: "1px solid #ddd",
+                                                        padding: "10px",
+                                                }}
+                                            />
+                                            <DeleteIcon
+                                                style={{ cursor: "pointer", color: "red" }}
+                                                onClick={() => handleDeleteSensor(sensor.id)}
+                                            />
+                                    </div>
+                                ))}
+
+                                <Button
+                                    type="button"
+                                    style={{
+                                            marginTop: "10px",
+                                            backgroundColor: "#28a745",
+                                            color: "white",
+                                            borderRadius: "5px",
+                                            padding: "10px 15px",
+                                            transition: "transform 0.2s ease-in-out",
+                                    }}
+                                    onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+                                    onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
+                                    onClick={handleAddSensor}
+                                >
+                                        Add Sensor +
+                                </Button>
+                                {showSensorInput && (
+                                    <div style={{ marginTop: "10px" }}>
+                                            <select
+                                                value={newSensor.type}
+                                                onChange={(e) => setNewSensor({ ...newSensor, type: e.target.value })}
+                                                style={{
+                                                        marginBottom: "10px",
+                                                        padding: "10px",
+                                                        borderRadius: "5px",
+                                                        backgroundColor: "#f7f7f7",
+                                                        border: "1px solid #ddd",
+                                                        outline: "none",
+                                                        cursor: "pointer",
+                                                        transition: "all 0.3s ease",
+                                                }}
+                                                onFocus={(e) => (e.target.style.boxShadow = "0 0 10px rgba(0, 123, 255, 0.5)")}
+                                                onBlur={(e) => (e.target.style.boxShadow = "none")}
+                                            >
+                                                    <option value="">Select Sensor Type</option>
+                                                    {sensorTypes.map((type) => (
+                                                        <option key={type} value={type}>
+                                                                {type}
+                                                        </option>
+                                                    ))}
+                                            </select>
+                                            {errors.sensorType && <p style={{ color: "red", fontSize: "12px" }}>{errors.sensorType}</p>}
+                                            <Input
+                                                name="sensor-min"
+                                                placeholder="Min Value"
+                                                value={newSensor.min}
+                                                onChange={(e) => setNewSensor({ ...newSensor, min: e.target.value })}
+                                            />
+                                            <Input
+                                                name="sensor-max"
+                                                placeholder="Max Value"
+                                                value={newSensor.max}
+                                                onChange={(e) => setNewSensor({ ...newSensor, max: e.target.value })}
+                                            />
+                                            {errors.sensorRange && <p style={{ color: "red", fontSize: "12px" }}>{errors.sensorRange}</p>}
+                                            <Button
+                                                type="button"
+                                                onClick={handleSaveSensor}
+                                                style={{
+                                                        marginRight: "10px",
+                                                        backgroundColor: "#007bff",
+                                                        color: "white",
+                                                        borderRadius: "5px",
+                                                        padding: "10px 15px",
+                                                        transition: "transform 0.2s ease-in-out",
+                                                }}
+                                                onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+                                                onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
+                                            >
+                                                    Save Sensor
+                                            </Button>
+                                    </div>
+                                )}
+
+                                <Input
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleImageUpload}
+                                    style={{
+                                            marginTop: "20px",
+                                            padding: "10px",
+                                            borderRadius: "5px",
+                                            border: "1px solid #ddd",
+                                    }}
+                                />
+                                {errors.imageUrl && <p style={{ color: "red", fontSize: "12px" }}>{errors.imageUrl}</p>}
+
+                                <Button
+                                    type="submit"
+                                    onClick={handleSave}
+                                    style={{
+                                            marginTop: "20px",
+                                            backgroundColor: "#007bff",
+                                            color: "white",
+                                            borderRadius: "5px",
+                                            padding: "10px 15px",
+                                            transition: "transform 0.2s ease-in-out",
+                                    }}
+                                    onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+                                    onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
+                                >
+                                        Save Changes
+                                </Button>
+                                {editingProfile && (
+                                    <Button
+                                        type="button"
+                                        onClick={() => handleActivate(editingProfile.id)}
+                                        style={{
+                                                marginTop: "10px",
+                                                backgroundColor: "greenyellow",
+                                                color: "white",
+                                                borderRadius: "5px",
+                                                padding: "10px 15px",
+                                                transition: "transform 0.2s ease-in-out",
+                                        }}
+                                        onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
+                                        onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
+                                    >
+                                            Activate
+                                    </Button>
+                                )}
+                        </Form>
+                    )}
             </div>
         );
-
 };
 
 export default PlantManagement;
