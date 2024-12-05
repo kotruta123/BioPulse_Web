@@ -12,6 +12,11 @@ import {
 } from "../../styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import cabbageImage from "../../../public/images/cabbage.jpg";
+import tomatoImage from "../../../public/images/tomato.jpg";
+import lettuceImage from "../../../public/images/lettuce.jpg";
+import spinachImage from "../../../public/images/spinach.jpg";
+import carrotImage from "../../../public/images/strawberry.jpg";
 
 const PlantManagement = () => {
         const [plantProfiles, setPlantProfiles] = useState([
@@ -19,7 +24,7 @@ const PlantManagement = () => {
                         id: 1,
                         name: "Cabbage",
                         status: "Inactive",
-                        imageUrl: "/images/cabbage.jpg",
+                        imageUrl: cabbageImage, // Updated to use imported image
                         sensors: [
                                 { id: 101, type: "Temperature", range: "18°C - 24°C" },
                                 { id: 102, type: "pH", range: "6.0 - 6.5" },
@@ -30,7 +35,7 @@ const PlantManagement = () => {
                         id: 2,
                         name: "Tomato",
                         status: "Inactive",
-                        imageUrl: "/images/tomato.jpg",
+                        imageUrl: tomatoImage,
                         sensors: [
                                 { id: 201, type: "Light", range: "12 hours/day" },
                                 { id: 202, type: "EC", range: "1.8 - 2.3 mS/cm" },
@@ -41,7 +46,7 @@ const PlantManagement = () => {
                         id: 3,
                         name: "Lettuce",
                         status: "Inactive",
-                        imageUrl: "/images/lettuce.jpg",
+                        imageUrl: lettuceImage,
                         sensors: [
                                 { id: 301, type: "Temperature", range: "15°C - 20°C" },
                                 { id: 302, type: "pH", range: "5.5 - 6.0" },
@@ -52,7 +57,7 @@ const PlantManagement = () => {
                         id: 4,
                         name: "Spinach",
                         status: "Inactive",
-                        imageUrl: "/images/spinach.jpg",
+                        imageUrl: spinachImage,
                         sensors: [
                                 { id: 401, type: "Temperature", range: "16°C - 24°C" },
                                 { id: 402, type: "Light", range: "10 hours/day" },
@@ -61,9 +66,9 @@ const PlantManagement = () => {
                 },
                 {
                         id: 5,
-                        name: "Carrot",
+                        name: "Strawberry",
                         status: "Inactive",
-                        imageUrl: "/images/carrot.jpg",
+                        imageUrl: carrotImage,
                         sensors: [
                                 { id: 501, type: "pH", range: "6.0 - 6.8" },
                                 { id: 502, type: "EC", range: "1.6 - 2.2 mS/cm" },

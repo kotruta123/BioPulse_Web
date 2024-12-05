@@ -1,0 +1,100 @@
+{
+  "hash": "e341c043",
+  "configHash": "1faee532",
+  "lockfileHash": "8e868362",
+  "browserHash": "ca8604d4",
+  "optimized": {
+    "react": {
+      "src": "../../node_modules/react/index.js",
+      "file": "react.js",
+      "fileHash": "dbbf74d3",
+      "needsInterop": true
+    },
+    "react-dom/client": {
+      "src": "../../node_modules/react-dom/client.js",
+      "file": "react-dom_client.js",
+      "fileHash": "0447ce1d",
+      "needsInterop": true
+    },
+    "react-router-dom": {
+      "src": "../../node_modules/react-router-dom/dist/index.js",
+      "file": "react-router-dom.js",
+      "fileHash": "c26529b1",
+      "needsInterop": false
+    },
+    "@mui/icons-material/Edit": {
+      "src": "../../node_modules/@mui/icons-material/esm/Edit.js",
+      "file": "@mui_icons-material_Edit.js",
+      "fileHash": "29e78aa9",
+      "needsInterop": false
+    },
+    "@mui/icons-material/Delete": {
+      "src": "../../node_modules/@mui/icons-material/esm/Delete.js",
+      "file": "@mui_icons-material_Delete.js",
+      "fileHash": "173de851",
+      "needsInterop": false
+    },
+    "styled-components": {
+      "src": "../../node_modules/styled-components/dist/styled-components.browser.esm.js",
+      "file": "styled-components.js",
+      "fileHash": "baef381d",
+      "needsInterop": false
+    },
+    "@mui/icons-material": {
+      "src": "../../node_modules/@mui/icons-material/esm/index.js",
+      "file": "@mui_icons-material.js",
+      "fileHash": "17c1400e",
+      "needsInterop": false
+    },
+    "@mui/material/Avatar": {
+      "src": "../../node_modules/@mui/material/Avatar/index.js",
+      "file": "@mui_material_Avatar.js",
+      "fileHash": "39f1bf53",
+      "needsInterop": false
+    },
+    "@mui/icons-material/Refresh": {
+      "src": "../../node_modules/@mui/icons-material/esm/Refresh.js",
+      "file": "@mui_icons-material_Refresh.js",
+      "fileHash": "091b8fd5",
+      "needsInterop": false
+    },
+    "react-slick": {
+      "src": "../../node_modules/react-slick/lib/index.js",
+      "file": "react-slick.js",
+      "fileHash": "c2bf2c8e",
+      "needsInterop": true
+    },
+    "react-gauge-chart": {
+      "src": "../../node_modules/react-gauge-chart/dist/index.js",
+      "file": "react-gauge-chart.js",
+      "fileHash": "7dbefcd3",
+      "needsInterop": true
+    }
+  },
+  "chunks": {
+    "chunk-2TWLSXLY": {
+      "file": "chunk-2TWLSXLY.js"
+    },
+    "chunk-MOJMDY5S": {
+      "file": "chunk-MOJMDY5S.js"
+    },
+    "chunk-5MPKHTCJ": {
+      "file": "chunk-5MPKHTCJ.js"
+    },
+    "chunk-FCDFV5EP": {
+      "file": "chunk-FCDFV5EP.js"
+    },
+    "chunk-TUS7CZF3": {
+      "file": "chunk-TUS7CZF3.js"
+    },
+    "chunk-4T7EBYY5": {
+      "file": "chunk-4T7EBYY5.js"
+    },
+    "chunk-AUXVLWD2": {
+      "file": "chunk-AUXVLWD2.js"
+    },
+    "chunk-LABQ442N": {
+      "file": "chunk-LABQ442N.js"
+    }
+  }
+}

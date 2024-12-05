@@ -1,4 +1,5 @@
 import { StrictMode } from 'react'
+import React from "../.vite/deps/react.js";
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 
