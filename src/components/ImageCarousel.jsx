@@ -12,12 +12,12 @@ const images = [
 
 const ImageCarousel = () => {
     const  settings = {
-        dots: true,        // Enable dots
+        dots: true,
         infinite: true,
         speed: 500,
         slidesToShow: 1,
         slidesToScroll: 1,
-        arrows: true,      // Enable arrows
+        arrows: true,
     };
 
 

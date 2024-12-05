@@ -16,6 +16,7 @@ export const SidebarContainer = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 20px 0;
+    height: 95%;
 `;
 
 export const Container = styled.div`
@@ -104,6 +105,7 @@ export const PlantAndCarouselRow = styled.div`
 export const PlantCardContainer = styled.div`
     position: relative;
     display: flex;
+    flex: max-content;
     flex-direction: column;
     align-items: center;
     justify-content: center;
@@ -150,10 +152,13 @@ export const EditIcon = styled.div`
 
 export const PlantGrid = styled.div`
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(10px, 1fr)); /* Dynamic columns */
-    gap: 15px; /* Reduce gap between items */
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
+    gap: 25px; 
     padding: 20px;
+    width: 100%;
+    box-sizing: border-box; 
 `;
+
 
 
 
