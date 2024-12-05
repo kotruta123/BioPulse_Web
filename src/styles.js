@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-
+import backgroundImage from "../public/images/backgroundLogin.png";
 
 export const AppContainer = styled.div`
     display: flex;
@@ -243,10 +243,11 @@ export const Background = styled.div`
     justify-content: center;
     height: 100vh;
     width: 100vw;
-    background-image: url('../public/images/backgrond login.png');
+    background-image: url(${backgroundImage});
     background-size: cover;
     background-position: center;
 `;
+
 
 export const CardContainer = styled.div`
     perspective: 1500px; /* Enables 3D effect */
@@ -258,7 +259,7 @@ export const CardWrapper = styled.div`
     position: relative;
     transform-style: preserve-3d;
     transition: transform 0.6s;
-    transform: ${({ isLogin }) => (isLogin ? 'rotateY(0deg)' : 'rotateY(180deg)')};
+    transform: ${({ $isLogin }) => ($isLogin ? "rotateY(0)" : "rotateY(180deg)")};
 `;
 
 export const CardInner = styled.div`

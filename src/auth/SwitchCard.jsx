@@ -17,7 +17,7 @@ const SwitchCard = () => {
     return (
         <Background>
             <CardContainer>
-                <CardWrapper isLogin={isLogin}>
+                <CardWrapper $isLogin={isLogin}>
                     <CardInner>
                         <CardFront>
                             <Login onSwitchToRestore={() => setIsLogin(false)} />
