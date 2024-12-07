@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
 import { PlantServiceProvider } from './services/PlantService';
 import { SensorServiceProvider } from './services/SensorService';
@@ -32,32 +32,30 @@ function App() {
                     <NotificationServiceProvider>
                         <CameraServiceProvider>
                             <BackupServiceProvider>
-                                <Router>
-                                    <Routes>
-                                        {/* Public Route for Login and RestoreCredentials */}
-                                        <Route path="/login" element={<SwitchCard />} />
+                                <Routes>
+                                    {/* Public Route for Login */}
+                                    <Route path="/login" element={<SwitchCard />} />
 
-                                        {/* Protected Routes within ProtectedLayout */}
-                                        <Route
-                                            element={
-                                                <ProtectedRoute>
-                                                    <ProtectedLayout />
-                                                </ProtectedRoute>
-                                            }
-                                        >
-                                            <Route path="/dashboard" element={<Dashboard />} />
-                                            <Route path="/plant-management" element={<PlantManagement />} />
-                                            <Route path="/sensor-management" element={<SensorManagement />} />
-                                            <Route path="/camera-settings" element={<CameraSettings />} />
-                                            <Route path="/notifications" element={<NotificationsSettings />} />
-                                            <Route path="/backup" element={<BackupRestore />} />
-                                            <Route path="/data-export" element={<DataExport />} />
-                                        </Route>
+                                    {/* Protected Routes */}
+                                    <Route
+                                        element={
+                                            <ProtectedRoute>
+                                                <ProtectedLayout />
+                                            </ProtectedRoute>
+                                        }
+                                    >
+                                        <Route path="/dashboard" element={<Dashboard />} />
+                                        <Route path="/plant-management" element={<PlantManagement />} />
+                                        <Route path="/sensor-management" element={<SensorManagement />} />
+                                        <Route path="/camera-settings" element={<CameraSettings />} />
+                                        <Route path="/notifications" element={<NotificationsSettings />} />
+                                        <Route path="/backup" element={<BackupRestore />} />
+                                        <Route path="/data-export" element={<DataExport />} />
+                                    </Route>
 
-                                        {/* Redirect all other routes to login */}
-                                        <Route path="*" element={<Navigate to="/login" />} />
-                                    </Routes>
-                                </Router>
+                                    {/* Redirect all other routes to login */}
+                                    <Route path="*" element={<Navigate to="/login" />} />
+                                </Routes>
                             </BackupServiceProvider>
                         </CameraServiceProvider>
                     </NotificationServiceProvider>
