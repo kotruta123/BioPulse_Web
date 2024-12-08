@@ -21,13 +21,49 @@ export const SidebarContainer = styled.div`
 
 export const Container = styled.div`
     padding: 20px;
-    max-width: 1000px;
+    max-width: max-content;
     margin: 0 auto;
+`;
+export const Section = styled.div`
+    margin: 30px 0;
+    padding: 20px;
     background-color: #ffffff;
-    border-radius: 8px;
+    border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
 
+export const Heading = styled.h3`
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+`;
+
+export const FormContainer = styled.div`
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    margin: 0 auto;
+`;
+
+
+export const Button = styled.button`
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 15px;
+    font-size: 14px;
+    cursor: pointer;
+    margin: 5px;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
 export const IconButton = styled.div`
     margin: 15px 0;
     width: 50px;
@@ -191,7 +227,6 @@ export const SensorCardContainer = styled.div`
     flex-direction: column;
     align-items: center;
     padding: 15px;
-    background-color: white;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 `;
@@ -322,22 +357,6 @@ export const Input = styled.input`
     background-color: #f9f9f9;
 `;
 
-export const Button = styled.button`
-    margin-top: 15px;
-    padding: 12px;
-    width: 100%;
-    border: none;
-    border-radius: 5px;
-    background-color: #007bff;
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-
-    &:hover {
-        background-color: #0056b3;
-    }
-`;
 
 
 export const RefreshButton = styled.button`

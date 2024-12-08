@@ -1,21 +1,25 @@
 import React, { useState } from "react";
+import { useSensorService } from "../services/SensorService.jsx";
 import SensorCard from "./SensorCard";
 import StyledGaugeChart from "./StyledGaugeChart";
 import ImageCarousel from "./ImageCarousel";
-import { SensorGrid, RefreshButton, ContentContainer } from "../styles";
+import { SensorGrid, ContentContainer, RefreshButton } from "../styles";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 const DashboardContent = () => {
+    const { sensors } = useSensorService();
+    const activeSensors = sensors.filter((sensor) => sensor.isEnabled);
+
     const [data, setData] = useState({
-        temp: 35.65,
-        ph: 7.8,
-        ec: 677.64,
+        temp: Math.random() * 50, // Example: Temperature value
+        ph: Math.random() * 14,  // Example: pH value
+        ec: Math.random() * 1000, // Example: EC value
     });
 
     const handleRefresh = () => {
         setData({
             temp: Math.random() * 50,
-            ph: (Math.random() * 14).toFixed(2),
+            ph: Math.random() * 14,
             ec: Math.random() * 1000,
         });
     };
@@ -27,50 +31,42 @@ const DashboardContent = () => {
                     <RefreshIcon /> Refresh
                 </RefreshButton>
             </div>
+
+            <h2>Active Sensors</h2>
             <SensorGrid>
-                <div>
-                    <SensorCard
-                        title="Temp"
-                        value={`${data.temp.toFixed(2)}°C`}
-                        status="Moderate"
-                    />
-                    <StyledGaugeChart
-                        title="Temperature"
-                        value={data.temp}
-                        maxValue={50}
-                        unit="°C"
-                    />
-                </div>
-                <div>
-                    <SensorCard
-                        title="pH"
-                        value={data.ph}
-                        status="Good"
-                    />
-                    <StyledGaugeChart
-                        title="pH Levels"
-                        value={parseFloat(data.ph)}
-                        maxValue={14}
-                        unit=""
-                    />
-                </div>
-                <div>
-                    <SensorCard
-                        title="Water EC"
-                        value={`${data.ec.toFixed(2)} μS/cm`}
-                        status="Bad"
-                    />
-                    <StyledGaugeChart
-                        title="Water EC"
-                        value={data.ec}
-                        maxValue={1000}
-                        unit="μS/cm"
-                    />
-                </div>
+                {activeSensors.map((sensor, index) => {
+                    const value =
+                        sensor.sensorType === "Temperature" ? data.temp :
+                            sensor.sensorType === "pH" ? data.ph : data.ec;
+
+                    const range =
+                        sensor.sensorType === "Temperature" ? { min: 20, max: 35 } : // Example range for Temperature
+                            sensor.sensorType === "pH" ? { min: 6.5, max: 8.5 } : // Example range for pH
+                                { min: 500, max: 800 }; // Example range for EC
+
+                    return (
+                        <div key={sensor.id}>
+                            <SensorCard
+                                title={sensor.name}
+                                value={value.toFixed(2)} // Dynamic value
+                                status={value >= range.min && value <= range.max ? "Good" : "Bad"}
+                            />
+                            <StyledGaugeChart
+                                title={sensor.sensorType}
+                                value={value} // Dynamic value
+                                minValue={0}
+                                maxValue={sensor.sensorType === "pH" ? 14 : sensor.sensorType === "EC" ? 1000 : 50}
+                                range={range}
+                                unit={sensor.sensorType === "Temperature" ? "°C" : ""}
+                            />
+
+                        </div>
+                    );
+                })}
             </SensorGrid>
+
             <ImageCarousel />
         </ContentContainer>
-
     );
 };
 
