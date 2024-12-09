@@ -8,9 +8,6 @@ export default defineConfig({
     extensions: ['.js', '.jsx', '.ts', '.tsx'], // Include extensions
   },
   server: {
-    headers: {
-      'Content-Type': 'application/javascript',
-    },
     fs: {
       allow: ['..'],
     },
