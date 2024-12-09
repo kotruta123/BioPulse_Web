@@ -11,9 +11,6 @@ export default defineConfig({
     fs: {
       allow: ['..'],
     },
-    headers: {
-      'Content-Type': 'application/javascript',
-    },
   },
   optimizeDeps: {
     include: ['slick-carousel'],
