@@ -4,32 +4,27 @@ import { useAuth } from "./AuthContext";
 import { Form, Input, Button } from "../styles";
 
 const Login = ({ onSwitchToRestore }) => {
-    const { login, loginAsGuest } = useAuth();
-    const [username, setUsername] = useState("");
+    const { login } = useAuth();
+    const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = (e) => {
+    const handleLogin = async (e) => {
         e.preventDefault();
-        const success = login(username, password);
+        const success = await login(email, password);
         if (success) {
             navigate("/dashboard");
         }
-    };
-
-    const handleGuestLogin = () => {
-        loginAsGuest();
-        navigate("/dashboard");
     };
 
     return (
         <Form onSubmit={handleLogin}>
             <h2>Login</h2>
             <Input
-                type="text"
-                placeholder="Username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
             />
             <Input
@@ -40,9 +35,6 @@ const Login = ({ onSwitchToRestore }) => {
                 required
             />
             <Button type="submit">Login</Button>
-            <Button type="button" onClick={handleGuestLogin}>
-                Login as Guest
-            </Button>
             <Button type="button" onClick={onSwitchToRestore} style={{ color: "red", backgroundColor: "transparent" }}>
                 Forgot Password?
             </Button>

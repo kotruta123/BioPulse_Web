@@ -1,69 +1,34 @@
 import React, { createContext, useContext, useState } from "react";
+import UserService from "../services/UserService";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [user, setUser] = useState(null);
 
-    const login = (username, password) => {
-        const storedUser = JSON.parse(localStorage.getItem(username));
-        if (storedUser && storedUser.password === password) {
+    const login = async (email, password) => {
+        try {
+            const userData = await UserService.authenticateUser(email, password);
             setIsAuthenticated(true);
+            setUser(userData);
             return true;
-        } else {
-            alert("Invalid username or password");
+        } catch (error) {
+            alert(error.message);
             return false;
         }
-    };
-
-    const register = (username, email, securityQuestion, password) => {
-        if (localStorage.getItem(username)) {
-            alert("Username already exists");
-            return false;
-        }
-
-        const user = { username, email, securityQuestion, password };
-        localStorage.setItem(username, JSON.stringify(user));
-        alert("Registration successful!");
-        return true;
-    };
-
-    const restorePassword = (username, securityQuestion, newPassword) => {
-        const storedUser = JSON.parse(localStorage.getItem(username));
-        if (storedUser && storedUser.securityQuestion === securityQuestion) {
-            storedUser.password = newPassword;
-            localStorage.setItem(username, JSON.stringify(storedUser));
-            alert("Password reset successful!");
-            return true;
-        } else {
-            alert("Invalid username or security question answer");
-            return false;
-        }
-    };
-
-    const loginAsGuest = () => {
-        setIsAuthenticated(true);
     };
 
     const logout = () => {
         setIsAuthenticated(false);
+        setUser(null);
     };
 
     return (
-        <AuthContext.Provider
-            value={{
-                isAuthenticated,
-                login,
-                register,
-                restorePassword,
-                loginAsGuest,
-                logout,
-            }}
-        >
+        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
 };
 
-// Ensure `useAuth` is exported
 export const useAuth = () => useContext(AuthContext);

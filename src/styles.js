@@ -407,3 +407,20 @@ export const CarouselImage = styled.img`
     border-radius: 8px;
 `;
 
+export const ErrorMessage = styled.div`
+    color: red;
+    font-size: 14px;
+`;
+
+export const ProfileContainer = styled.div`
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+const StyledButton = styled.button`
+    background-color: ${(props) => (props.$status === "success" ? "green" : "red")};
+`;
+

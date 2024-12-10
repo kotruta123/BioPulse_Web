@@ -26,8 +26,9 @@ const Sidebar = () => (
         <IconButton><Link to="/notifications"><Notifications /></Link></IconButton>
         <IconButton><Link to="/backup"><Backup /></Link></IconButton>
         <IconButton><Link to="/data-export"><Description /></Link></IconButton>
+
         <AvatarContainer>
-            <Avatar src="https://randomuser.me/api/portraits/men/32.jpg" />
+            <Link to="/user-profile"> <Avatar src="https://randomuser.me/api/portraits/men/32.jpg" /></Link>
         </AvatarContainer>
     </SidebarContainer>
 );

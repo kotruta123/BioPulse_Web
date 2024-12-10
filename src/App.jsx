@@ -17,6 +17,7 @@ import CameraSettings from "./components/settings/CameraSettings.jsx";
 import NotificationsSettings from "./components/settings/NotificationsSettings.jsx";
 import BackupRestore from './components/BackupRestore';
 import DataExport from './components/DataExport';
+import UserProfile from "./components/UserProfile.jsx";
 
 // Protected Route Wrapper to enforce authentication
 const ProtectedRoute = ({ children }) => {
@@ -51,6 +52,7 @@ function App() {
                                         <Route path="/notifications" element={<NotificationsSettings />} />
                                         <Route path="/backup" element={<BackupRestore />} />
                                         <Route path="/data-export" element={<DataExport />} />
+                                        <Route path="/user-profile" element={<UserProfile />} />
                                     </Route>
 
                                     {/* Redirect all other routes to login */}
