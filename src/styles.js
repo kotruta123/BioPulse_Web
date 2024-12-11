@@ -411,6 +411,20 @@ export const ErrorMessage = styled.div`
     color: red;
     font-size: 14px;
 `;
+export const UserDetail = styled.div`
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #555;
+
+    strong {
+        color: #222;
+    }
+`;
+export const LoadingMessage = styled.p`
+    text-align: center;
+    font-size: 1em;
+    color: #888;
+`;
 
 export const ProfileContainer = styled.div`
     max-width: 500px;

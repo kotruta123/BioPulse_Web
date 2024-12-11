@@ -118,9 +118,6 @@ const RestoreCredentials = () => {
             <Button type="submit" disabled={loading}>
                 {loading ? "Processing..." : "Reset Password"}
             </Button>
-            <Button type="button" onClick={() => navigate("/login")}>
-                Go to Login
-            </Button>
         </Form>
     );
 };

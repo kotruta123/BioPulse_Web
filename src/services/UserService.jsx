@@ -6,7 +6,7 @@ const UserService = {
     authenticateUser: async (email, password) => {
         try {
             console.log("Sending login request with:", { email, password });
-            const response = await axios.post("http://localhost:5000/api/users/authenticate", {
+            const response = await axios.post(`${API_BASE_URL}/authenticate`, {
                 email,
                 password,
             });
@@ -25,11 +25,9 @@ const UserService = {
         }
     },
 
-
-
     getSecurityQuestion: async (email) => {
         try {
-            const response = await axios.get(`http://localhost:5000/api/users/${email}/security-question`);
+            const response = await axios.get(`${API_BASE_URL}/${email}/security-question`);
             return response.data; // The security question
         } catch (error) {
             console.error("Error fetching security question:", error.response?.data || error.message);
@@ -37,10 +35,9 @@ const UserService = {
         }
     },
 
-
     recoverPassword: async (email, securityQuestion, securityAnswer, newPassword) => {
         try {
-            const response = await axios.post("http://localhost:5000/api/users/recover-password", {
+            const response = await axios.post(`${API_BASE_URL}/recover-password`, {
                 email,
                 securityQuestion,
                 securityAnswer,
@@ -53,17 +50,57 @@ const UserService = {
         }
     },
 
-
     getUserDetails: async (email) => {
         if (!email) {
             throw new Error("Email is required to fetch user details.");
         }
         try {
-            const response = await axios.get(`http://localhost:5000/api/users/${email}/security-question`);
+            const response = await axios.get(`${API_BASE_URL}/${email}/security-question`);
             return response.data;
         } catch (error) {
             console.error("Failed to fetch user details:", error.response?.data || error.message);
             throw new Error(error.response?.data || "Failed to fetch user details.");
+        }
+    },
+
+    getUserById: async (id) => {
+        try {
+            const response = await axios.get(`${API_BASE_URL}/${id}`);
+            return response.data; // Return user details
+        } catch (error) {
+            console.error("Error fetching user details by ID:", error.response?.data || error.message);
+            throw new Error(error.response?.data || "Failed to fetch user details.");
+        }
+    },
+
+    // New method: Update user's email
+    updateEmail: async (id, email) => {
+        try {
+            const response = await axios.put(`${API_BASE_URL}/${id}/email`, { email });
+            return response.data;
+        } catch (error) {
+            console.error("Error updating email:", error.response?.data || error.message);
+            throw new Error(error.response?.data || "Failed to update email.");
+        }
+    },
+
+    // New method: Update user's password
+    updatePassword: async (id, password) => {
+        try {
+            const response = await axios.put(`${API_BASE_URL}/${id}/password`, { password });
+            return response.data;
+        } catch (error) {
+            console.error("Error updating password:", error.response?.data || error.message);
+            throw new Error(error.response?.data || "Failed to update password.");
+        }
+    },
+    verifySecurityAnswer: async (userId, securityAnswer) => {
+        try {
+            const response = await axios.post(`${API_BASE_URL}/${userId}/verify-security-answer`, { securityAnswer });
+            return response.data.isValid; // Assumes API returns { isValid: true/false }
+        } catch (error) {
+            console.error("Error verifying security answer:", error.response?.data || error.message);
+            throw new Error(error.response?.data || "Failed to verify security answer.");
         }
     },
 

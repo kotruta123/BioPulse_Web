@@ -25,6 +25,17 @@ const ProtectedRoute = ({ children }) => {
     return isAuthenticated ? children : <Navigate to="/login" />;
 };
 
+const UserProfileWrapper = () => {
+    const { user } = useAuth(); // Retrieve user object from the Auth context
+    const userId = user?.id; // Extract userId from the user object
+
+    if (!userId) {
+        return <Navigate to="/login" />; // Redirect to login if userId is not available
+    }
+
+    return <UserProfile userId={userId} />;
+};
+
 function App() {
     return (
         <AuthProvider>
@@ -52,7 +63,7 @@ function App() {
                                         <Route path="/notifications" element={<NotificationsSettings />} />
                                         <Route path="/backup" element={<BackupRestore />} />
                                         <Route path="/data-export" element={<DataExport />} />
-                                        <Route path="/user-profile" element={<UserProfile />} />
+                                        <Route path="/user-profile" element={<UserProfileWrapper />} />
                                     </Route>
 
                                     {/* Redirect all other routes to login */}
