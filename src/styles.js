@@ -407,3 +407,34 @@ export const CarouselImage = styled.img`
     border-radius: 8px;
 `;
 
+export const ErrorMessage = styled.div`
+    color: red;
+    font-size: 14px;
+`;
+export const UserDetail = styled.div`
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #555;
+
+    strong {
+        color: #222;
+    }
+`;
+export const LoadingMessage = styled.p`
+    text-align: center;
+    font-size: 1em;
+    color: #888;
+`;
+
+export const ProfileContainer = styled.div`
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    background: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+const StyledButton = styled.button`
+    background-color: ${(props) => (props.$status === "success" ? "green" : "red")};
+`;
+

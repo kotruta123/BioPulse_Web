@@ -17,11 +17,23 @@ import CameraSettings from "./components/settings/CameraSettings.jsx";
 import NotificationsSettings from "./components/settings/NotificationsSettings.jsx";
 import BackupRestore from './components/BackupRestore';
 import DataExport from './components/DataExport';
+import UserProfile from "./components/UserProfile.jsx";
 
 // Protected Route Wrapper to enforce authentication
 const ProtectedRoute = ({ children }) => {
     const { isAuthenticated } = useAuth();
     return isAuthenticated ? children : <Navigate to="/login" />;
+};
+
+const UserProfileWrapper = () => {
+    const { user } = useAuth(); // Retrieve user object from the Auth context
+    const userId = user?.id; // Extract userId from the user object
+
+    if (!userId) {
+        return <Navigate to="/login" />; // Redirect to login if userId is not available
+    }
+
+    return <UserProfile userId={userId} />;
 };
 
 function App() {
@@ -51,6 +63,7 @@ function App() {
                                         <Route path="/notifications" element={<NotificationsSettings />} />
                                         <Route path="/backup" element={<BackupRestore />} />
                                         <Route path="/data-export" element={<DataExport />} />
+                                        <Route path="/user-profile" element={<UserProfileWrapper />} />
                                     </Route>
 
                                     {/* Redirect all other routes to login */}
