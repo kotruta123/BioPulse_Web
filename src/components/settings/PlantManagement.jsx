@@ -1,398 +1,573 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
         PlantGrid,
         PlantCardContainer,
         PlantImage,
         PlantOverlay,
         PlantTitle,
-        PlantStatus,
         Input,
-        Button,
         Form,
 } from "../../styles";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import cabbageImage from "../../../public/images/cabbage.jpg";
-import tomatoImage from "../../../public/images/tomato.jpg";
-import lettuceImage from "../../../public/images/lettuce.jpg";
-import spinachImage from "../../../public/images/spinach.jpg";
-import carrotImage from "../../../public/images/strawberry.jpg";
+import strawberryImage from "../../../public/images/strawberry.jpg";
+import {
+        getPlantProfiles,
+        addPlantProfile,
+        updatePlantProfile,
+        deletePlantProfile
+} from "../../services/PlantService.jsx";
+import styled, { keyframes } from "styled-components";
+
+const fadeIn = keyframes`
+        0% { opacity: 0; transform: translateY(10px); }
+        100% { opacity: 1; transform: translateY(0); }
+`;
+
+const PageContainer = styled.div`
+        padding: 20px;
+        animation: ${fadeIn} 0.5s ease forwards;
+        min-height: 100vh;
+        background: #f0f2f5;
+`;
+
+const AddButton = styled.button`
+        font-size: 16px;
+        background: linear-gradient(to right, #4a90e2, #0072ff);
+        color: #fff;
+        border-radius: 8px;
+        padding: 12px 20px;
+        cursor: pointer;
+        border: none;
+        margin-top: 20px;
+        transition: transform 0.2s ease-in-out, background 0.3s;
+        font-weight: 600;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+        &:hover {
+                transform: scale(1.03);
+                background: linear-gradient(to right, #0072ff, #4a90e2);
+        }
+`;
+
+const ModalBackground = styled.div`
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 999;
+        animation: ${fadeIn} 0.3s ease forwards;
+`;
+
+const FormContainer = styled(Form)`
+        background: #ffffff;
+        border-radius: 12px;
+        padding: 30px 30px 40px;
+        max-width: 700px;
+        width: 90%;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        animation: ${fadeIn} 0.5s ease forwards;
+        position: relative;
+`;
+
+const CloseButton = styled.button`
+        background: transparent;
+        border: none;
+        font-size: 22px;
+        color: #999;
+        cursor: pointer;
+        position: absolute;
+        top: 15px;
+        right: 20px;
+
+        &:hover {
+                color: #666;
+        }
+`;
+
+const FormHeader = styled.h3`
+        font-size: 22px;
+        margin-bottom: 25px;
+        color: #333;
+        text-align: center;
+        font-weight: 700;
+`;
+
+const FullWidthGroup = styled.div`
+        grid-column: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        label {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #333;
+                text-align: center;
+        }
+
+        ${Input} {
+                text-align: center;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                background: #fafafa;
+                width: 70%;
+                max-width: 300px;
+                transition: border 0.2s;
+                &:focus {
+                        border-color: #4a90e2;
+                        outline: none;
+                }
+        }
+`;
+
+const FormGroup = styled.div`
+        display: flex;
+        flex-direction: column;
+
+        label {
+                font-size: 14px;
+                font-weight: 600;
+                margin-bottom: 8px;
+                color: #333;
+        }
+
+        ${Input} {
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 6px;
+                font-size: 14px;
+                background: #fafafa;
+                transition: border 0.2s;
+                &:focus {
+                        border-color: #4a90e2;
+                        outline: none;
+                }
+        }
+`;
+
+const TwoColumnRow = styled.div`
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 30px;
+        grid-column: 1 / -1; /* full width of the grid */
+        margin-top: 20px;
+`;
+
+const SaveButton = styled.button`
+        margin-top: 30px;
+        width: 100%;
+        background: linear-gradient(to right, #4a90e2, #0072ff);
+        padding: 14px 0;
+        font-size: 16px;
+        font-weight: 600;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: transform 0.2s ease-in-out, background 0.3s;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+
+        &:hover {
+                transform: scale(1.02);
+                background: linear-gradient(to right, #0072ff, #4a90e2);
+        }
+`;
+
+const ErrorMessage = styled.p`
+        color: red;
+        font-size: 12px;
+        margin-top: 5px;
+`;
+
+const DataCard = styled.div`
+        background: #f9fafc;
+        border-radius: 10px;
+        margin-top: 30px;
+        padding: 30px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        animation: ${fadeIn} 0.5s ease forwards;
+        max-width: 700px;
+        width: 100%;
+        margin: 30px auto;
+
+        h4 {
+                font-size: 20px;
+                margin-bottom: 25px;
+                font-weight: 700;
+                color: #333;
+                text-align: center;
+        }
+
+        .data-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 30px;
+        }
+
+        .data-item {
+                background: #fff;
+                border-radius: 8px;
+                padding: 12px;
+                border: 1px solid #eee;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+
+                span.label {
+                        font-size: 12px;
+                        color: #666;
+                        margin-bottom: 5px;
+                }
+
+                span.value {
+                        font-size: 14px;
+                        font-weight: 600;
+                        color: #333;
+                }
+        }
+`;
 
 const PlantManagement = () => {
-        const [plantProfiles, setPlantProfiles] = useState([
-                {
-                        id: 1,
-                        name: "Cabbage",
-                        status: "Inactive",
-                        imageUrl: cabbageImage, // Updated to use imported image
-                        sensors: [
-                                { id: 101, type: "Temperature", range: "18°C - 24°C" },
-                                { id: 102, type: "pH", range: "6.0 - 6.5" },
-                        ],
-                        isDefault: true,
-                },
-                {
-                        id: 2,
-                        name: "Tomato",
-                        status: "Inactive",
-                        imageUrl: tomatoImage,
-                        sensors: [
-                                { id: 201, type: "Light", range: "12 hours/day" },
-                                { id: 202, type: "EC", range: "1.8 - 2.3 mS/cm" },
-                        ],
-                        isDefault: true,
-                },
-                {
-                        id: 3,
-                        name: "Lettuce",
-                        status: "Inactive",
-                        imageUrl: lettuceImage,
-                        sensors: [
-                                { id: 301, type: "Temperature", range: "15°C - 20°C" },
-                                { id: 302, type: "pH", range: "5.5 - 6.0" },
-                        ],
-                        isDefault: true,
-                },
-                {
-                        id: 4,
-                        name: "Spinach",
-                        status: "Inactive",
-                        imageUrl: spinachImage,
-                        sensors: [
-                                { id: 401, type: "Temperature", range: "16°C - 24°C" },
-                                { id: 402, type: "Light", range: "10 hours/day" },
-                        ],
-                        isDefault: false,
-                },
-                {
-                        id: 5,
-                        name: "Strawberry",
-                        status: "Inactive",
-                        imageUrl: carrotImage,
-                        sensors: [
-                                { id: 501, type: "pH", range: "6.0 - 6.8" },
-                                { id: 502, type: "EC", range: "1.6 - 2.2 mS/cm" },
-                        ],
-                        isDefault: false,
-                },
-        ]);
-
-
-        const [newProfile, setNewProfile] = useState({ name: "", imageUrl: null, sensors: [] });
+        const [plantProfiles, setPlantProfiles] = useState([]);
+        const [newProfile, setNewProfile] = useState({
+                name: "",
+                isDefault: false,
+                phMin: 6.0,
+                phMax: 7.5,
+                temperatureMin: 22.0,
+                temperatureMax: 27.0,
+                lightOnTime: new Date().toISOString(),
+                lightOffTime: new Date().toISOString(),
+                lightMin: 250.0,
+                lightMax: 450.0,
+                ecMin: 1.5,
+                ecMax: 2.5,
+        });
         const [editingProfile, setEditingProfile] = useState(null);
-        const [newSensor, setNewSensor] = useState({ type: "", range: "" });
-        const [showSensorInput, setShowSensorInput] = useState(false);
         const [errors, setErrors] = useState({});
-        const [isAddingNewPlant, setIsAddingNewPlant] = useState(false);
+        const [showModal, setShowModal] = useState(false);
+        const [selectedProfile, setSelectedProfile] = useState(null); // For displaying current data outside the modal
 
-        const sensorTypes = ["Temperature", "pH", "EC", "Light"];
+        useEffect(() => {
+                const fetchProfiles = async () => {
+                        try {
+                                const profiles = await getPlantProfiles();
+                                setPlantProfiles(profiles);
+                        } catch (error) {
+                                console.error("Error fetching plant profiles:", error);
+                        }
+                };
+                fetchProfiles();
+        }, []);
 
         const resetForm = () => {
-                setNewProfile({ name: "", imageUrl: null, sensors: [] });
+                setNewProfile({
+                        name: "",
+                        isDefault: false,
+                        phMin: 6.0,
+                        phMax: 7.5,
+                        temperatureMin: 22.0,
+                        temperatureMax: 27.0,
+                        lightOnTime: new Date().toISOString(),
+                        lightOffTime: new Date().toISOString(),
+                        lightMin: 250.0,
+                        lightMax: 450.0,
+                        ecMin: 1.5,
+                        ecMax: 2.5,
+                });
                 setEditingProfile(null);
                 setErrors({});
+        };
+
+        const handleCardClick = (profile) => {
+                setSelectedProfile(profile);
         };
 
         const handleEdit = (profile) => {
                 resetForm();
                 setEditingProfile(profile);
-                setNewProfile({ ...profile });
+                setNewProfile({
+                        name: profile.name,
+                        isDefault: profile.isDefault,
+                        phMin: profile.phMin,
+                        phMax: profile.phMax,
+                        temperatureMin: profile.temperatureMin,
+                        temperatureMax: profile.temperatureMax,
+                        lightOnTime: profile.lightOnTime,
+                        lightOffTime: profile.lightOffTime,
+                        lightMin: profile.lightMin,
+                        lightMax: profile.lightMax,
+                        ecMin: profile.ecMin,
+                        ecMax: profile.ecMax,
+                });
+                setShowModal(true);
         };
 
-        const handleSave = (e) => {
-                e.preventDefault();
+        const validateForm = () => {
                 let formErrors = {};
                 if (!newProfile.name) formErrors.name = "Plant name is required.";
-                if (!newProfile.imageUrl) formErrors.imageUrl = "Plant image is required.";
+                return formErrors;
+        };
 
+        const handleSave = async (e) => {
+                e.preventDefault();
+                const formErrors = validateForm();
                 if (Object.keys(formErrors).length > 0) {
                         setErrors(formErrors);
                         return;
                 }
 
-                if (editingProfile) {
-                        const updatedProfiles = plantProfiles.map((profile) =>
-                            profile.id === editingProfile.id ? { ...newProfile } : profile
-                        );
-                        setPlantProfiles(updatedProfiles);
-                } else {
-                        const newPlant = { ...newProfile, id: Date.now(), isDefault: false };
-                        setPlantProfiles([...plantProfiles, newPlant]);
+                const profileData = {
+                        name: newProfile.name,
+                        isDefault: newProfile.isDefault,
+                        phMin: parseFloat(newProfile.phMin),
+                        phMax: parseFloat(newProfile.phMax),
+                        temperatureMin: parseFloat(newProfile.temperatureMin),
+                        temperatureMax: parseFloat(newProfile.temperatureMax),
+                        lightOnTime: new Date(newProfile.lightOnTime).toISOString(),
+                        lightOffTime: new Date(newProfile.lightOffTime).toISOString(),
+                        lightMin: parseFloat(newProfile.lightMin),
+                        lightMax: parseFloat(newProfile.lightMax),
+                        ecMin: parseFloat(newProfile.ecMin),
+                        ecMax: parseFloat(newProfile.ecMax)
+                };
+
+                try {
+                        if (editingProfile) {
+                                profileData.id = editingProfile.id;
+                                await updatePlantProfile(profileData);
+                        } else {
+                                await addPlantProfile(profileData);
+                        }
+                        const profiles = await getPlantProfiles();
+                        setPlantProfiles(profiles);
+
+                        resetForm();
+                        setShowModal(false);
+                } catch (error) {
+                        console.error("Error saving plant profile:", error);
                 }
-
-                resetForm();
-                setIsAddingNewPlant(false);
         };
 
-        const handleImageUpload = (e) => {
-                const file = e.target.files[0];
-                if (file) {
-                        const reader = new FileReader();
-                        reader.onload = () => setNewProfile({ ...newProfile, imageUrl: reader.result });
-                        reader.readAsDataURL(file);
+        const handleDeleteProfile = async (id) => {
+                try {
+                        await deletePlantProfile(id);
+                        setPlantProfiles(plantProfiles.filter((profile) => profile.id !== id));
+                        if (selectedProfile && selectedProfile.id === id) {
+                                setSelectedProfile(null);
+                        }
+                } catch (error) {
+                        console.error("Error deleting plant profile:", error);
                 }
-        };
-
-        const handleActivate = (id) => {
-                const updatedProfiles = plantProfiles.map((profile) =>
-                    profile.id === id
-                        ? { ...profile, status: "Active" }
-                        : { ...profile, status: "Inactive" }
-                );
-                setPlantProfiles(updatedProfiles);
-        };
-
-        const handleDeleteProfile = (id) => {
-                setPlantProfiles(plantProfiles.filter((profile) => profile.id !== id || profile.isDefault));
-        };
-
-        const handleAddSensor = () => {
-                setShowSensorInput(true);
-        };
-
-        const handleSaveSensor = () => {
-                let formErrors = {};
-                if (!newSensor.type) formErrors.sensorType = "Sensor type is required.";
-                if (!newSensor.min || isNaN(newSensor.min)) formErrors.sensorMin = "Valid minimum value is required.";
-                if (!newSensor.max || isNaN(newSensor.max)) formErrors.sensorMax = "Valid maximum value is required.";
-                if (Object.keys(formErrors).length > 0) {
-                        setErrors(formErrors);
-                        return;
-                }
-                setNewProfile({
-                        ...newProfile,
-                        sensors: [
-                                ...newProfile.sensors,
-                                { ...newSensor, id: Date.now() },
-                        ],
-                });
-                setNewSensor({ type: "", min: "", max: "" });
-                setShowSensorInput(false);
-                setErrors({});
-        };
-
-        const handleDeleteSensor = (id) => {
-                setNewProfile({
-                        ...newProfile,
-                        sensors: newProfile.sensors.filter((sensor) => sensor.id !== id),
-                });
         };
 
         const handleAddNewPlant = () => {
                 resetForm();
-                setIsAddingNewPlant(true);
+                setShowModal(true);
+        };
+
+        const closeModal = () => {
+                setShowModal(false);
+                resetForm();
         };
 
         return (
-            <div style={{ padding: "20px" }}>
-                    {/* Plant Profiles */}
+            <PageContainer>
                     <PlantGrid>
                             {plantProfiles.map((profile) => (
-                                <PlantCardContainer key={profile.id} isActive={profile.status === "Active"}>
-                                        <PlantImage src={profile.imageUrl} alt={profile.name} />
+                                <PlantCardContainer key={profile.id} onClick={() => handleCardClick(profile)} style={{cursor:'pointer'}}>
+                                        <PlantImage src={strawberryImage} alt={profile.name} />
                                         <PlantOverlay>
                                                 <PlantTitle>{profile.name}</PlantTitle>
-                                                <PlantStatus>{profile.status || "Inactive"}</PlantStatus>
                                                 <EditIcon
                                                     style={{ cursor: "pointer", color: "white", marginTop: "10px" }}
-                                                    onClick={() => handleEdit(profile)}
+                                                    onClick={(e) => { e.stopPropagation(); handleEdit(profile); }}
                                                 />
                                                 {!profile.isDefault && (
                                                     <DeleteIcon
                                                         style={{ cursor: "pointer", color: "red", marginTop: "10px" }}
-                                                        onClick={() => handleDeleteProfile(profile.id)}
+                                                        onClick={(e) => { e.stopPropagation(); handleDeleteProfile(profile.id); }}
                                                     />
                                                 )}
                                         </PlantOverlay>
                                 </PlantCardContainer>
                             ))}
-                            <Button
-                                style={{
-                                        marginTop: "20px",
-                                        fontSize: "18px",
-                                        background: "linear-gradient(to right, #00c6ff, #0072ff)",
-                                        color: "white",
-                                        borderRadius: "10px",
-                                        padding: "15px",
-                                        cursor: "pointer",
-                                        transition: "transform 0.2s ease-in-out",
-                                        boxShadow: "0 5px 15px rgba(0, 0, 0, 0.1)",
-                                }}
-                                onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-                                onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
-                                onClick={handleAddNewPlant}
-                            >
+                            <AddButton onClick={handleAddNewPlant}>
                                     Add New Plant Profile +
-                            </Button>
+                            </AddButton>
                     </PlantGrid>
 
-                    {/* Add/Edit Profile Form */}
-                    {(isAddingNewPlant || editingProfile) && (
-                        <Form style={{ marginTop: "20px", animation: "fadeIn 0.5s ease-in-out" }}>
-                                <h3>{editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}</h3>
-                                <Input
-                                    type="text"
-                                    placeholder="Plant Name"
-                                    value={newProfile.name}
-                                    onChange={(e) => setNewProfile({ ...newProfile, name: e.target.value })}
-                                />
-                                {errors.name && <p style={{ color: "red", fontSize: "12px" }}>{errors.name}</p>}
-
-                                <h4 style={{ marginTop: "20px" }}>Sensors</h4>
-                                {newProfile.sensors.map((sensor) => (
-                                    <div key={sensor.id} style={{ display: "flex", alignItems: "center", marginBottom: "10px" }}>
-                                            <span style={{ marginRight: "10px", fontWeight: "bold" }}>{sensor.type}</span>
-                                            <Input
-                                                type="text"
-                                                value={sensor.range}
-                                                placeholder="Working Range"
-                                                onChange={(e) =>
-                                                    setNewProfile({
-                                                            ...newProfile,
-                                                            sensors: newProfile.sensors.map((s) =>
-                                                                s.id === sensor.id ? { ...s, range: e.target.value } : s
-                                                            ),
-                                                    })
-                                                }
-                                                style={{
-                                                        flex: "1",
-                                                        marginRight: "10px",
-                                                        borderRadius: "5px",
-                                                        border: "1px solid #ddd",
-                                                        padding: "10px",
-                                                }}
-                                            />
-                                            <DeleteIcon
-                                                style={{ cursor: "pointer", color: "red" }}
-                                                onClick={() => handleDeleteSensor(sensor.id)}
-                                            />
-                                    </div>
-                                ))}
-
-                                <Button
-                                    type="button"
-                                    style={{
-                                            marginTop: "10px",
-                                            backgroundColor: "#28a745",
-                                            color: "white",
-                                            borderRadius: "5px",
-                                            padding: "10px 15px",
-                                            transition: "transform 0.2s ease-in-out",
-                                    }}
-                                    onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-                                    onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
-                                    onClick={handleAddSensor}
-                                >
-                                        Add Sensor +
-                                </Button>
-                                {showSensorInput && (
-                                    <div style={{ marginTop: "10px" }}>
-                                            <select
-                                                value={newSensor.type}
-                                                onChange={(e) => setNewSensor({ ...newSensor, type: e.target.value })}
-                                                style={{
-                                                        marginBottom: "10px",
-                                                        padding: "10px",
-                                                        borderRadius: "5px",
-                                                        backgroundColor: "#f7f7f7",
-                                                        border: "1px solid #ddd",
-                                                        outline: "none",
-                                                        cursor: "pointer",
-                                                        transition: "all 0.3s ease",
-                                                }}
-                                                onFocus={(e) => (e.target.style.boxShadow = "0 0 10px rgba(0, 123, 255, 0.5)")}
-                                                onBlur={(e) => (e.target.style.boxShadow = "none")}
-                                            >
-                                                    <option value="">Select Sensor Type</option>
-                                                    {sensorTypes.map((type) => (
-                                                        <option key={type} value={type}>
-                                                                {type}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                            {errors.sensorType && <p style={{ color: "red", fontSize: "12px" }}>{errors.sensorType}</p>}
-                                            <Input
-                                                name="sensor-min"
-                                                placeholder="Min Value"
-                                                value={newSensor.min}
-                                                onChange={(e) => setNewSensor({ ...newSensor, min: e.target.value })}
-                                            />
-                                            <Input
-                                                name="sensor-max"
-                                                placeholder="Max Value"
-                                                value={newSensor.max}
-                                                onChange={(e) => setNewSensor({ ...newSensor, max: e.target.value })}
-                                            />
-                                            {errors.sensorRange && <p style={{ color: "red", fontSize: "12px" }}>{errors.sensorRange}</p>}
-                                            <Button
-                                                type="button"
-                                                onClick={handleSaveSensor}
-                                                style={{
-                                                        marginRight: "10px",
-                                                        backgroundColor: "#007bff",
-                                                        color: "white",
-                                                        borderRadius: "5px",
-                                                        padding: "10px 15px",
-                                                        transition: "transform 0.2s ease-in-out",
-                                                }}
-                                                onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-                                                onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
-                                            >
-                                                    Save Sensor
-                                            </Button>
-                                    </div>
-                                )}
-
-                                <Input
-                                    type="file"
-                                    accept="image/*"
-                                    onChange={handleImageUpload}
-                                    style={{
-                                            marginTop: "20px",
-                                            padding: "10px",
-                                            borderRadius: "5px",
-                                            border: "1px solid #ddd",
-                                    }}
-                                />
-                                {errors.imageUrl && <p style={{ color: "red", fontSize: "12px" }}>{errors.imageUrl}</p>}
-
-                                <Button
-                                    type="submit"
-                                    onClick={handleSave}
-                                    style={{
-                                            marginTop: "20px",
-                                            backgroundColor: "#007bff",
-                                            color: "white",
-                                            borderRadius: "5px",
-                                            padding: "10px 15px",
-                                            transition: "transform 0.2s ease-in-out",
-                                    }}
-                                    onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-                                    onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
-                                >
-                                        Save Changes
-                                </Button>
-                                {editingProfile && (
-                                    <Button
-                                        type="button"
-                                        onClick={() => handleActivate(editingProfile.id)}
-                                        style={{
-                                                marginTop: "10px",
-                                                backgroundColor: "greenyellow",
-                                                color: "white",
-                                                borderRadius: "5px",
-                                                padding: "10px 15px",
-                                                transition: "transform 0.2s ease-in-out",
-                                        }}
-                                        onMouseOver={(e) => (e.target.style.transform = "scale(1.05)")}
-                                        onMouseOut={(e) => (e.target.style.transform = "scale(1)")}
-                                    >
-                                            Activate
-                                    </Button>
-                                )}
-                        </Form>
+                    {selectedProfile && (
+                        <DataCard>
+                                <h4>Current Profile Data</h4>
+                                <div className="data-grid">
+                                        <div className="data-item">
+                                                <span className="label">Name:</span>
+                                                <span className="value">{selectedProfile.name}</span>
+                                        </div>
+                                        <div className="data-item">
+                                                <span className="label">pH Range:</span>
+                                                <span className="value">{selectedProfile.phMin} - {selectedProfile.phMax}</span>
+                                        </div>
+                                        <div className="data-item">
+                                                <span className="label">Temp Range (°C):</span>
+                                                <span className="value">{selectedProfile.temperatureMin} - {selectedProfile.temperatureMax}</span>
+                                        </div>
+                                        <div className="data-item">
+                                                <span className="label">Light On/Off:</span>
+                                                <span className="value">{new Date(selectedProfile.lightOnTime).toLocaleString()} / {new Date(selectedProfile.lightOffTime).toLocaleString()}</span>
+                                        </div>
+                                        <div className="data-item">
+                                                <span className="label">Light Range:</span>
+                                                <span className="value">{selectedProfile.lightMin} - {selectedProfile.lightMax}</span>
+                                        </div>
+                                        <div className="data-item">
+                                                <span className="label">EC Range:</span>
+                                                <span className="value">{selectedProfile.ecMin} - {selectedProfile.ecMax}</span>
+                                        </div>
+                                </div>
+                        </DataCard>
                     )}
-            </div>
+
+                    {showModal && (
+                        <ModalBackground>
+                                <FormContainer>
+                                        <CloseButton onClick={closeModal}>×</CloseButton>
+                                        <FormHeader>{editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}</FormHeader>
+
+                                        {/* Full width centered Plant Name */}
+                                        <FullWidthGroup>
+                                                <label>Plant Name</label>
+                                                <Input
+                                                    type="text"
+                                                    value={newProfile.name}
+                                                    onChange={(e) => setNewProfile({ ...newProfile, name: e.target.value })}
+                                                />
+                                                {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
+                                        </FullWidthGroup>
+
+                                        {/* pH Min/Max */}
+                                        <TwoColumnRow>
+                                                <FormGroup>
+                                                        <label>pH Min</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.phMin}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, phMin: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                        <label>pH Max</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.phMax}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, phMax: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                        </TwoColumnRow>
+
+                                        {/* Temp Min/Max */}
+                                        <TwoColumnRow>
+                                                <FormGroup>
+                                                        <label>Temp Min (°C)</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.temperatureMin}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, temperatureMin: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                        <label>Temp Max (°C)</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.temperatureMax}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, temperatureMax: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                        </TwoColumnRow>
+
+                                        {/* Light On/Off */}
+                                        <TwoColumnRow>
+                                                <FormGroup>
+                                                        <label>Light On Time</label>
+                                                        <Input
+                                                            type="datetime-local"
+                                                            value={new Date(newProfile.lightOnTime).toISOString().slice(0,16)}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, lightOnTime: new Date(e.target.value).toISOString() })}
+                                                        />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                        <label>Light Off Time</label>
+                                                        <Input
+                                                            type="datetime-local"
+                                                            value={new Date(newProfile.lightOffTime).toISOString().slice(0,16)}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, lightOffTime: new Date(e.target.value).toISOString() })}
+                                                        />
+                                                </FormGroup>
+                                        </TwoColumnRow>
+
+                                        {/* Light Min/Max */}
+                                        <TwoColumnRow>
+                                                <FormGroup>
+                                                        <label>Light Min</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.lightMin}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, lightMin: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                        <label>Light Max</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.lightMax}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, lightMax: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                        </TwoColumnRow>
+
+                                        {/* EC Min/Max */}
+                                        <TwoColumnRow>
+                                                <FormGroup>
+                                                        <label>EC Min</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.ecMin}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, ecMin: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                                <FormGroup>
+                                                        <label>EC Max</label>
+                                                        <Input
+                                                            type="number"
+                                                            step="0.1"
+                                                            value={newProfile.ecMax}
+                                                            onChange={(e) => setNewProfile({ ...newProfile, ecMax: e.target.value })}
+                                                        />
+                                                </FormGroup>
+                                        </TwoColumnRow>
+
+                                        <SaveButton onClick={handleSave}>Save Changes</SaveButton>
+                                </FormContainer>
+                        </ModalBackground>
+                    )}
+            </PageContainer>
         );
 };
 

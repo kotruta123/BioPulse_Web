@@ -1,7 +1,6 @@
 import React from 'react';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './auth/AuthContext';
-import { PlantServiceProvider } from './services/PlantService';
 import { SensorServiceProvider } from './services/SensorService';
 import { NotificationServiceProvider } from './services/NotificationService';
 import { CameraServiceProvider } from './services/CameraService';
@@ -39,7 +38,6 @@ const UserProfileWrapper = () => {
 function App() {
     return (
         <AuthProvider>
-            <PlantServiceProvider>
                 <SensorServiceProvider>
                     <NotificationServiceProvider>
                         <CameraServiceProvider>
@@ -73,7 +71,6 @@ function App() {
                         </CameraServiceProvider>
                     </NotificationServiceProvider>
                 </SensorServiceProvider>
-            </PlantServiceProvider>
         </AuthProvider>
     );
 }
