@@ -17,11 +17,22 @@ import {
         updatePlantProfile,
         deletePlantProfile
 } from "../../services/PlantService.jsx";
-import styled, { keyframes } from "styled-components";
+import styled, { keyframes, createGlobalStyle } from "styled-components";
+
+const GlobalStyle = createGlobalStyle`
+        body {
+                position: relative;
+        }
+`;
 
 const fadeIn = keyframes`
-        0% { opacity: 0; transform: translateY(10px); }
+        0% { opacity: 0; transform: translateY(-10px); }
         100% { opacity: 1; transform: translateY(0); }
+`;
+
+const fadeOut = keyframes`
+        from {opacity:1;}
+        to {opacity:0;}
 `;
 
 const PageContainer = styled.div`
@@ -29,6 +40,7 @@ const PageContainer = styled.div`
         animation: ${fadeIn} 0.5s ease forwards;
         min-height: 100vh;
         background: #f0f2f5;
+        position: relative;
 `;
 
 const AddButton = styled.button`
@@ -183,57 +195,73 @@ const SaveButton = styled.button`
 `;
 
 const ErrorMessage = styled.p`
-        color: red;
-        font-size: 12px;
-        margin-top: 5px;
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
 `;
 
 const DataCard = styled.div`
-        background: #f9fafc;
-        border-radius: 10px;
-        margin-top: 30px;
-        padding: 30px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-        animation: ${fadeIn} 0.5s ease forwards;
-        max-width: 700px;
-        width: 100%;
-        margin: 30px auto;
+  background: #f9fafc;
+  border-radius: 10px;
+  margin-top: 30px;
+  padding: 30px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  animation: ${fadeIn} 0.5s ease forwards;
+  max-width: 700px;
+  width: 100%;
+  margin: 30px auto;
 
-        h4 {
-                font-size: 20px;
-                margin-bottom: 25px;
-                font-weight: 700;
-                color: #333;
-                text-align: center;
-        }
+  h4 {
+    font-size: 20px;
+    margin-bottom: 25px;
+    font-weight: 700;
+    color: #333;
+    text-align: center;
+  }
 
-        .data-grid {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 30px;
-        }
+  .data-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
 
-        .data-item {
-                background: #fff;
-                border-radius: 8px;
-                padding: 12px;
-                border: 1px solid #eee;
-                display: flex;
-                flex-direction: column;
-                align-items: flex-start;
+  .data-item {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #eee;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
 
-                span.label {
-                        font-size: 12px;
-                        color: #666;
-                        margin-bottom: 5px;
-                }
+    span.label {
+      font-size: 12px;
+      color: #666;
+      margin-bottom: 5px;
+    }
 
-                span.value {
-                        font-size: 14px;
-                        font-weight: 600;
-                        color: #333;
-                }
-        }
+    span.value {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+  }
+`;
+
+// Success and Error banners
+const MessageBanner = styled.div`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  text-align: center;
+  padding: 15px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  z-index: 1000;
+  animation: ${fadeIn} 0.3s ease forwards;
+  ${({ type }) => type === 'success' && `background: #4caf50;`}
+  ${({ type }) => type === 'error' && `background: #f44336;`}
 `;
 
 const PlantManagement = () => {
@@ -255,7 +283,9 @@ const PlantManagement = () => {
         const [editingProfile, setEditingProfile] = useState(null);
         const [errors, setErrors] = useState({});
         const [showModal, setShowModal] = useState(false);
-        const [selectedProfile, setSelectedProfile] = useState(null); // For displaying current data outside the modal
+        const [selectedProfile, setSelectedProfile] = useState(null);
+        const [successMessage, setSuccessMessage] = useState("");
+        const [errorMessage, setErrorMessage] = useState("");
 
         useEffect(() => {
                 const fetchProfiles = async () => {
@@ -264,10 +294,25 @@ const PlantManagement = () => {
                                 setPlantProfiles(profiles);
                         } catch (error) {
                                 console.error("Error fetching plant profiles:", error);
+                                setErrorMessage("Failed to load plant profiles.");
                         }
                 };
                 fetchProfiles();
         }, []);
+
+        useEffect(() => {
+                if (successMessage) {
+                        const timer = setTimeout(() => setSuccessMessage(""), 3000);
+                        return () => clearTimeout(timer);
+                }
+        }, [successMessage]);
+
+        useEffect(() => {
+                if (errorMessage) {
+                        const timer = setTimeout(() => setErrorMessage(""), 5000);
+                        return () => clearTimeout(timer);
+                }
+        }, [errorMessage]);
 
         const resetForm = () => {
                 setNewProfile({
@@ -345,8 +390,10 @@ const PlantManagement = () => {
                         if (editingProfile) {
                                 profileData.id = editingProfile.id;
                                 await updatePlantProfile(profileData);
+                                setSuccessMessage("Profile updated successfully!");
                         } else {
                                 await addPlantProfile(profileData);
+                                setSuccessMessage("Profile added successfully!");
                         }
                         const profiles = await getPlantProfiles();
                         setPlantProfiles(profiles);
@@ -355,6 +402,7 @@ const PlantManagement = () => {
                         setShowModal(false);
                 } catch (error) {
                         console.error("Error saving plant profile:", error);
+                        setErrorMessage("Failed to save the profile. Please try again.");
                 }
         };
 
@@ -365,8 +413,10 @@ const PlantManagement = () => {
                         if (selectedProfile && selectedProfile.id === id) {
                                 setSelectedProfile(null);
                         }
+                        setSuccessMessage("Profile deleted successfully!");
                 } catch (error) {
                         console.error("Error deleting plant profile:", error);
+                        setErrorMessage("Failed to delete the profile. Please try again.");
                 }
         };
 
@@ -382,6 +432,18 @@ const PlantManagement = () => {
 
         return (
             <PageContainer>
+                    <GlobalStyle />
+                    {successMessage && (
+                        <MessageBanner type="success">
+                                {successMessage}
+                        </MessageBanner>
+                    )}
+                    {errorMessage && (
+                        <MessageBanner type="error">
+                                {errorMessage}
+                        </MessageBanner>
+                    )}
+
                     <PlantGrid>
                             {plantProfiles.map((profile) => (
                                 <PlantCardContainer key={profile.id} onClick={() => handleCardClick(profile)} style={{cursor:'pointer'}}>
@@ -389,11 +451,13 @@ const PlantManagement = () => {
                                         <PlantOverlay>
                                                 <PlantTitle>{profile.name}</PlantTitle>
                                                 <EditIcon
+                                                    data-testid={`edit-icon-${profile.id}`}
                                                     style={{ cursor: "pointer", color: "white", marginTop: "10px" }}
                                                     onClick={(e) => { e.stopPropagation(); handleEdit(profile); }}
                                                 />
                                                 {!profile.isDefault && (
                                                     <DeleteIcon
+                                                        data-testid={`delete-icon-${profile.id}`}
                                                         style={{ cursor: "pointer", color: "red", marginTop: "10px" }}
                                                         onClick={(e) => { e.stopPropagation(); handleDeleteProfile(profile.id); }}
                                                     />
@@ -444,18 +508,17 @@ const PlantManagement = () => {
                                         <CloseButton onClick={closeModal}>×</CloseButton>
                                         <FormHeader>{editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}</FormHeader>
 
-                                        {/* Full width centered Plant Name */}
                                         <FullWidthGroup>
                                                 <label>Plant Name</label>
                                                 <Input
                                                     type="text"
                                                     value={newProfile.name}
                                                     onChange={(e) => setNewProfile({ ...newProfile, name: e.target.value })}
+                                                    placeholder="Plant Name"
                                                 />
                                                 {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
                                         </FullWidthGroup>
 
-                                        {/* pH Min/Max */}
                                         <TwoColumnRow>
                                                 <FormGroup>
                                                         <label>pH Min</label>
@@ -477,7 +540,6 @@ const PlantManagement = () => {
                                                 </FormGroup>
                                         </TwoColumnRow>
 
-                                        {/* Temp Min/Max */}
                                         <TwoColumnRow>
                                                 <FormGroup>
                                                         <label>Temp Min (°C)</label>
@@ -499,7 +561,6 @@ const PlantManagement = () => {
                                                 </FormGroup>
                                         </TwoColumnRow>
 
-                                        {/* Light On/Off */}
                                         <TwoColumnRow>
                                                 <FormGroup>
                                                         <label>Light On Time</label>
@@ -519,7 +580,6 @@ const PlantManagement = () => {
                                                 </FormGroup>
                                         </TwoColumnRow>
 
-                                        {/* Light Min/Max */}
                                         <TwoColumnRow>
                                                 <FormGroup>
                                                         <label>Light Min</label>
@@ -541,7 +601,6 @@ const PlantManagement = () => {
                                                 </FormGroup>
                                         </TwoColumnRow>
 
-                                        {/* EC Min/Max */}
                                         <TwoColumnRow>
                                                 <FormGroup>
                                                         <label>EC Min</label>

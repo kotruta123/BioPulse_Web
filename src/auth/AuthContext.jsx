@@ -12,10 +12,9 @@ export const AuthProvider = ({ children }) => {
             const userData = await UserService.authenticateUser(email, password);
             setIsAuthenticated(true);
             setUser(userData);
-            return true;
+            return { success: true };
         } catch (error) {
-            alert(error.message);
-            return false;
+            return { success: false, message: error.message || "Login failed. Please try again." };
         }
     };
 
