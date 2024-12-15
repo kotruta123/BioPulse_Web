@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes, createGlobalStyle } from "styled-components";
 import { useNavigate } from "react-router-dom";
-import UserService from "../services/UserService";
-import { useAuth } from "../auth/AuthContext";
+import UserService from "../../services/UserService.jsx";
+import { useAuth } from "../../auth/AuthContext.jsx";
 
 // Global styles
 const GlobalStyle = createGlobalStyle`

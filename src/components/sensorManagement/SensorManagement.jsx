@@ -3,8 +3,8 @@ import { useSensorService } from "../../services/SensorService.jsx";
 import {
     Container, SensorGrid, SensorCardContainer, Form, Input, Button, Section, Heading, FormContainer
 } from "../../styles.js";
-import SensorCard from "../SensorCard";
-import StyledGaugeChart from "../StyledGaugeChart";
+import SensorCard from "./SensorCard.jsx";
+import StyledGaugeChart from "./StyledGaugeChart.jsx";
 import { Thermostat, Add, Delete, Edit, Wifi, Home } from "@mui/icons-material";
 
 const SensorManagement = () => {

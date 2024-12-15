@@ -7,16 +7,15 @@ import { CameraServiceProvider } from './services/CameraService';
 import { BackupServiceProvider } from './services/BackupService';
 
 // Import pages and components
-import Dashboard from './components/Dashboard';
+import Dashboard from './components/dashboard/Dashboard.jsx';
 import SwitchCard from './auth/SwitchCard';
 import ProtectedLayout from "./components/ProtectedLayout.jsx";
-import PlantManagement from "./components/settings/PlantManagement.jsx";
-import SensorManagement from "./components/settings/SensorManagement.jsx";
-import CameraSettings from "./components/settings/CameraSettings.jsx";
+import PlantManagement from "./components/plantManagement/PlantManagement.jsx";
+import SensorManagement from "./components/sensorManagement/SensorManagement.jsx";
 import NotificationsSettings from "./components/settings/NotificationsSettings.jsx";
 import BackupRestore from './components/BackupRestore';
 import DataExport from './components/DataExport';
-import UserProfile from "./components/UserProfile.jsx";
+import UserProfile from "./components/userManagement/UserProfile.jsx";
 
 // Protected Route Wrapper to enforce authentication
 const ProtectedRoute = ({ children }) => {
@@ -57,7 +56,6 @@ function App() {
                                         <Route path="/dashboard" element={<Dashboard />} />
                                         <Route path="/plant-management" element={<PlantManagement />} />
                                         <Route path="/sensor-management" element={<SensorManagement />} />
-                                        <Route path="/camera-settings" element={<CameraSettings />} />
                                         <Route path="/notifications" element={<NotificationsSettings />} />
                                         <Route path="/backup" element={<BackupRestore />} />
                                         <Route path="/data-export" element={<DataExport />} />

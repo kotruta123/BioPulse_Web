@@ -7,7 +7,7 @@ import {
         PlantTitle,
         Input,
         Form,
-} from "../../styles";
+} from "../../styles.js";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import strawberryImage from "../../../public/images/strawberry.jpg";

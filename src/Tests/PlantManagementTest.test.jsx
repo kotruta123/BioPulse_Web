@@ -1,7 +1,7 @@
 // PlantManagementTest.test.jsx
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import PlantManagement from "../components/settings/PlantManagement.jsx";
+import PlantManagement from "../components/plantManagement/PlantManagement.jsx";
 import * as PlantService from "../services/PlantService.jsx";
 
 // Mock the PlantService functions

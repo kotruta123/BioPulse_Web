@@ -3310,7 +3310,7 @@ function processLoaderData(state, matches, results, pendingActionResult, revalid
     let result = fetcherResults[key];
     invariant(result, "Did not find corresponding fetcher result");
     if (controller && controller.signal.aborted) {
-      return;
+
     } else if (isErrorResult(result)) {
       let boundaryMatch = findNearestBoundary(state.matches, match == null ? void 0 : match.route.id);
       if (!(errors && errors[boundaryMatch.route.id])) {

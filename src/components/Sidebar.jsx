@@ -22,8 +22,6 @@ const Sidebar = () => (
         <ActiveIconButton><Link to="/dashboard"><Home /></Link></ActiveIconButton>
         <IconButton><Link to="/plant-management"><Nature /></Link></IconButton>
         <IconButton><Link to="/sensor-management"><Water /></Link></IconButton>
-        <IconButton><Link to="/camera-settings"><CameraAlt /></Link></IconButton>
-        <IconButton><Link to="/notifications"><Notifications /></Link></IconButton>
         <IconButton><Link to="/backup"><Backup /></Link></IconButton>
         <IconButton><Link to="/data-export"><Description /></Link></IconButton>
 

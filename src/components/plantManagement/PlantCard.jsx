@@ -1,5 +1,5 @@
 import React from 'react';
-import { PlantCardContainer, PlantImage, PlantOverlay, PlantTitle, PlantStatus } from '../styles';
+import { PlantCardContainer, PlantImage, PlantOverlay, PlantTitle, PlantStatus } from '../../styles.js';
 
 const PlantCard = ({ imageUrl, title, status, isActive }) => (
     <PlantCardContainer isActive={isActive}>

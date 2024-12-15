@@ -1,6 +1,6 @@
 import React from "react";
 import Slider from "react-slick";
-import { CarouselContainer, CarouselImage, CarouselWrapper, CarouselTitle } from "../styles";
+import { CarouselContainer, CarouselImage, CarouselWrapper, CarouselTitle } from "../../styles.js";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 

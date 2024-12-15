@@ -1,9 +1,9 @@
 import React, { useState } from "react";
-import { useSensorService } from "../services/SensorService.jsx";
-import SensorCard from "./SensorCard";
-import StyledGaugeChart from "./StyledGaugeChart";
-import ImageCarousel from "./ImageCarousel";
-import { SensorGrid, ContentContainer, RefreshButton } from "../styles";
+import { useSensorService } from "../../services/SensorService.jsx";
+import SensorCard from "../sensorManagement/SensorCard.jsx";
+import StyledGaugeChart from "../sensorManagement/StyledGaugeChart.jsx";
+import ImageCarousel from "./ImageCarousel.jsx";
+import { SensorGrid, ContentContainer, RefreshButton } from "../../styles.js";
 import RefreshIcon from "@mui/icons-material/Refresh";
 
 const DashboardContent = () => {
