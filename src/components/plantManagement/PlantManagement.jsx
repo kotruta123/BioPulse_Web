@@ -11,258 +11,35 @@ import {
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import strawberryImage from "../../../public/images/strawberry.jpg";
+import cabbageImage from "../../../public/images/cabbage.jpg";
+import basilImage from "../../../public/images/basil.jpg";
+import lettuceImage from "../../../public/images/lettuce.jpg";
+import spinachImage from "../../../public/images/spinach.jpg";
+import tomatoImage from "../../../public/images/tomato.jpg";
 import {
         getPlantProfiles,
         addPlantProfile,
         updatePlantProfile,
         deletePlantProfile
 } from "../../services/PlantService.jsx";
-import styled, { keyframes, createGlobalStyle } from "styled-components";
+import {
+        GlobalStyle,
+        fadeIn,
+        PageContainer,
+        AddButton,
+        ModalBackground,
+        FormContainer,
+        CloseButton,
+        FormHeader,
+        FullWidthGroup,
+        FormGroup,
+        TwoColumnRow,
+        SaveButton,
+        ErrorMessage,
+        DataCard,
+        MessageBanner,
+} from "./PlantStyles";
 
-const GlobalStyle = createGlobalStyle`
-        body {
-                position: relative;
-        }
-`;
-
-const fadeIn = keyframes`
-        0% { opacity: 0; transform: translateY(-10px); }
-        100% { opacity: 1; transform: translateY(0); }
-`;
-
-const fadeOut = keyframes`
-        from {opacity:1;}
-        to {opacity:0;}
-`;
-
-const PageContainer = styled.div`
-        padding: 20px;
-        animation: ${fadeIn} 0.5s ease forwards;
-        min-height: 100vh;
-        background: #f0f2f5;
-        position: relative;
-`;
-
-const AddButton = styled.button`
-        font-size: 16px;
-        background: linear-gradient(to right, #4a90e2, #0072ff);
-        color: #fff;
-        border-radius: 8px;
-        padding: 12px 20px;
-        cursor: pointer;
-        border: none;
-        margin-top: 20px;
-        transition: transform 0.2s ease-in-out, background 0.3s;
-        font-weight: 600;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-
-        &:hover {
-                transform: scale(1.03);
-                background: linear-gradient(to right, #0072ff, #4a90e2);
-        }
-`;
-
-const ModalBackground = styled.div`
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0,0,0,0.4);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 999;
-        animation: ${fadeIn} 0.3s ease forwards;
-`;
-
-const FormContainer = styled(Form)`
-        background: #ffffff;
-        border-radius: 12px;
-        padding: 30px 30px 40px;
-        max-width: 700px;
-        width: 90%;
-        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-        animation: ${fadeIn} 0.5s ease forwards;
-        position: relative;
-`;
-
-const CloseButton = styled.button`
-        background: transparent;
-        border: none;
-        font-size: 22px;
-        color: #999;
-        cursor: pointer;
-        position: absolute;
-        top: 15px;
-        right: 20px;
-
-        &:hover {
-                color: #666;
-        }
-`;
-
-const FormHeader = styled.h3`
-        font-size: 22px;
-        margin-bottom: 25px;
-        color: #333;
-        text-align: center;
-        font-weight: 700;
-`;
-
-const FullWidthGroup = styled.div`
-        grid-column: 1 / -1;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-
-        label {
-                font-size: 14px;
-                font-weight: 600;
-                margin-bottom: 8px;
-                color: #333;
-                text-align: center;
-        }
-
-        ${Input} {
-                text-align: center;
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 6px;
-                font-size: 14px;
-                background: #fafafa;
-                width: 70%;
-                max-width: 300px;
-                transition: border 0.2s;
-                &:focus {
-                        border-color: #4a90e2;
-                        outline: none;
-                }
-        }
-`;
-
-const FormGroup = styled.div`
-        display: flex;
-        flex-direction: column;
-
-        label {
-                font-size: 14px;
-                font-weight: 600;
-                margin-bottom: 8px;
-                color: #333;
-        }
-
-        ${Input} {
-                padding: 10px;
-                border: 1px solid #ddd;
-                border-radius: 6px;
-                font-size: 14px;
-                background: #fafafa;
-                transition: border 0.2s;
-                &:focus {
-                        border-color: #4a90e2;
-                        outline: none;
-                }
-        }
-`;
-
-const TwoColumnRow = styled.div`
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 30px;
-        grid-column: 1 / -1; /* full width of the grid */
-        margin-top: 20px;
-`;
-
-const SaveButton = styled.button`
-        margin-top: 30px;
-        width: 100%;
-        background: linear-gradient(to right, #4a90e2, #0072ff);
-        padding: 14px 0;
-        font-size: 16px;
-        font-weight: 600;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: transform 0.2s ease-in-out, background 0.3s;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-
-        &:hover {
-                transform: scale(1.02);
-                background: linear-gradient(to right, #0072ff, #4a90e2);
-        }
-`;
-
-const ErrorMessage = styled.p`
-  color: red;
-  font-size: 12px;
-  margin-top: 5px;
-`;
-
-const DataCard = styled.div`
-  background: #f9fafc;
-  border-radius: 10px;
-  margin-top: 30px;
-  padding: 30px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-  animation: ${fadeIn} 0.5s ease forwards;
-  max-width: 700px;
-  width: 100%;
-  margin: 30px auto;
-
-  h4 {
-    font-size: 20px;
-    margin-bottom: 25px;
-    font-weight: 700;
-    color: #333;
-    text-align: center;
-  }
-
-  .data-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30px;
-  }
-
-  .data-item {
-    background: #fff;
-    border-radius: 8px;
-    padding: 12px;
-    border: 1px solid #eee;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-
-    span.label {
-      font-size: 12px;
-      color: #666;
-      margin-bottom: 5px;
-    }
-
-    span.value {
-      font-size: 14px;
-      font-weight: 600;
-      color: #333;
-    }
-  }
-`;
-
-// Success and Error banners
-const MessageBanner = styled.div`
-  position: fixed;
-  top: 0;
-  width: 100%;
-  text-align: center;
-  padding: 15px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  z-index: 1000;
-  animation: ${fadeIn} 0.3s ease forwards;
-  ${({ type }) => type === 'success' && `background: #4caf50;`}
-  ${({ type }) => type === 'error' && `background: #f44336;`}
-`;
 
 const PlantManagement = () => {
         const [plantProfiles, setPlantProfiles] = useState([]);
@@ -280,6 +57,8 @@ const PlantManagement = () => {
                 ecMin: 1.5,
                 ecMax: 2.5,
         });
+        const predefinedImages = [basilImage, cabbageImage, lettuceImage, spinachImage, tomatoImage];
+
         const [editingProfile, setEditingProfile] = useState(null);
         const [errors, setErrors] = useState({});
         const [showModal, setShowModal] = useState(false);
@@ -291,14 +70,18 @@ const PlantManagement = () => {
                 const fetchProfiles = async () => {
                         try {
                                 const profiles = await getPlantProfiles();
-                                setPlantProfiles(profiles);
+                                const updatedProfiles = profiles.map((profile, index) => ({
+                                        ...profile,
+                                        imageUrl: profile.imageUrl || predefinedImages[index] || strawberryImage,
+                                }));
+                                setPlantProfiles(updatedProfiles);
                         } catch (error) {
                                 console.error("Error fetching plant profiles:", error);
-                                setErrorMessage("Failed to load plant profiles.");
                         }
                 };
                 fetchProfiles();
         }, []);
+
 
         useEffect(() => {
                 if (successMessage) {
@@ -353,6 +136,8 @@ const PlantManagement = () => {
                         lightMax: profile.lightMax,
                         ecMin: profile.ecMin,
                         ecMax: profile.ecMax,
+                        imageUrl: "",
+
                 });
                 setShowModal(true);
         };
@@ -383,7 +168,8 @@ const PlantManagement = () => {
                         lightMin: parseFloat(newProfile.lightMin),
                         lightMax: parseFloat(newProfile.lightMax),
                         ecMin: parseFloat(newProfile.ecMin),
-                        ecMax: parseFloat(newProfile.ecMax)
+                        ecMax: parseFloat(newProfile.ecMax),
+                        imageUrl: newProfile.imageUrl || strawberryImage,
                 };
 
                 try {
@@ -395,8 +181,14 @@ const PlantManagement = () => {
                                 await addPlantProfile(profileData);
                                 setSuccessMessage("Profile added successfully!");
                         }
+
+                        // Fetch updated plant profiles and assign image URLs
                         const profiles = await getPlantProfiles();
-                        setPlantProfiles(profiles);
+                        const updatedProfiles = profiles.map((profile, index) => ({
+                                ...profile,
+                                imageUrl: profile.imageUrl || predefinedImages[index % predefinedImages.length] || strawberryImage,
+                        }));
+                        setPlantProfiles(updatedProfiles);
 
                         resetForm();
                         setShowModal(false);
@@ -405,6 +197,7 @@ const PlantManagement = () => {
                         setErrorMessage("Failed to save the profile. Please try again.");
                 }
         };
+
 
         const handleDeleteProfile = async (id) => {
                 try {
@@ -447,7 +240,7 @@ const PlantManagement = () => {
                     <PlantGrid>
                             {plantProfiles.map((profile) => (
                                 <PlantCardContainer key={profile.id} onClick={() => handleCardClick(profile)} style={{cursor:'pointer'}}>
-                                        <PlantImage src={strawberryImage} alt={profile.name} />
+                                        <PlantImage src={profile.imageUrl} alt={profile.name} />
                                         <PlantOverlay>
                                                 <PlantTitle>{profile.name}</PlantTitle>
                                                 <EditIcon
@@ -506,7 +299,9 @@ const PlantManagement = () => {
                         <ModalBackground>
                                 <FormContainer>
                                         <CloseButton onClick={closeModal}>×</CloseButton>
-                                        <FormHeader>{editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}</FormHeader>
+                                        <FormHeader>
+                                                {editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}
+                                        </FormHeader>
 
                                         <FullWidthGroup>
                                                 <label>Plant Name</label>
