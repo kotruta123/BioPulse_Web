@@ -1,45 +1,22 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
+import {GlobalStyle, PageContainer,} from "./PlantStyles";
 import {
-        PlantGrid,
-        PlantCardContainer,
-        PlantImage,
-        PlantOverlay,
-        PlantTitle,
-        Input,
-        Form,
-} from "../../styles.js";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+        addPlantProfile,
+        deletePlantProfile,
+        getPlantProfiles,
+        updatePlantProfile
+} from "../../services/PlantService.jsx";
+import PlantGrid from "./plantProfileComponents/PlantGrid.jsx";
+import PlantForm from "./plantProfileComponents/PlantForm.jsx";
+import DataCard from "./plantProfileComponents/DataCard.jsx";
+import MessageBanner from "./plantProfileComponents/MessageBanner.jsx";
 import strawberryImage from "../../../public/images/strawberry.jpg";
 import cabbageImage from "../../../public/images/cabbage.jpg";
 import basilImage from "../../../public/images/basil.jpg";
 import lettuceImage from "../../../public/images/lettuce.jpg";
 import spinachImage from "../../../public/images/spinach.jpg";
 import tomatoImage from "../../../public/images/tomato.jpg";
-import {
-        getPlantProfiles,
-        addPlantProfile,
-        updatePlantProfile,
-        deletePlantProfile
-} from "../../services/PlantService.jsx";
-import {
-        GlobalStyle,
-        fadeIn,
-        PageContainer,
-        AddButton,
-        ModalBackground,
-        FormContainer,
-        CloseButton,
-        FormHeader,
-        FullWidthGroup,
-        FormGroup,
-        TwoColumnRow,
-        SaveButton,
-        ErrorMessage,
-        DataCard,
-        MessageBanner,
-} from "./PlantStyles";
-
+import ParticlesBackground from "./plantProfileComponents/ParticlesBackground.jsx";
 
 const PlantManagement = () => {
         const [plantProfiles, setPlantProfiles] = useState([]);
@@ -72,7 +49,7 @@ const PlantManagement = () => {
                                 const profiles = await getPlantProfiles();
                                 const updatedProfiles = profiles.map((profile, index) => ({
                                         ...profile,
-                                        imageUrl: profile.imageUrl || predefinedImages[index] || strawberryImage,
+                                        imageUrl: profile.imageUrl || predefinedImages[index % predefinedImages.length] || strawberryImage,
                                 }));
                                 setPlantProfiles(updatedProfiles);
                         } catch (error) {
@@ -81,7 +58,6 @@ const PlantManagement = () => {
                 };
                 fetchProfiles();
         }, []);
-
 
         useEffect(() => {
                 if (successMessage) {
@@ -137,7 +113,6 @@ const PlantManagement = () => {
                         ecMin: profile.ecMin,
                         ecMax: profile.ecMax,
                         imageUrl: "",
-
                 });
                 setShowModal(true);
         };
@@ -198,7 +173,6 @@ const PlantManagement = () => {
                 }
         };
 
-
         const handleDeleteProfile = async (id) => {
                 try {
                         await deletePlantProfile(id);
@@ -226,200 +200,29 @@ const PlantManagement = () => {
         return (
             <PageContainer>
                     <GlobalStyle />
-                    {successMessage && (
-                        <MessageBanner type="success">
-                                {successMessage}
-                        </MessageBanner>
-                    )}
-                    {errorMessage && (
-                        <MessageBanner type="error">
-                                {errorMessage}
-                        </MessageBanner>
-                    )}
+                    <ParticlesBackground />
+                    {successMessage && <MessageBanner type="success" message={successMessage} />}
+                    {errorMessage && <MessageBanner type="error" message={errorMessage} />}
 
-                    <PlantGrid>
-                            {plantProfiles.map((profile) => (
-                                <PlantCardContainer key={profile.id} onClick={() => handleCardClick(profile)} style={{cursor:'pointer'}}>
-                                        <PlantImage src={profile.imageUrl} alt={profile.name} />
-                                        <PlantOverlay>
-                                                <PlantTitle>{profile.name}</PlantTitle>
-                                                <EditIcon
-                                                    data-testid={`edit-icon-${profile.id}`}
-                                                    style={{ cursor: "pointer", color: "white", marginTop: "10px" }}
-                                                    onClick={(e) => { e.stopPropagation(); handleEdit(profile); }}
-                                                />
-                                                {!profile.isDefault && (
-                                                    <DeleteIcon
-                                                        data-testid={`delete-icon-${profile.id}`}
-                                                        style={{ cursor: "pointer", color: "red", marginTop: "10px" }}
-                                                        onClick={(e) => { e.stopPropagation(); handleDeleteProfile(profile.id); }}
-                                                    />
-                                                )}
-                                        </PlantOverlay>
-                                </PlantCardContainer>
-                            ))}
-                            <AddButton onClick={handleAddNewPlant}>
-                                    Add New Plant Profile +
-                            </AddButton>
-                    </PlantGrid>
+                    <PlantGrid
+                        plantProfiles={plantProfiles}
+                        onCardClick={handleCardClick}
+                        onEdit={handleEdit}
+                        onDelete={handleDeleteProfile}
+                        onAddNewPlant={handleAddNewPlant}
+                    />
 
-                    {selectedProfile && (
-                        <DataCard>
-                                <h4>Current Profile Data</h4>
-                                <div className="data-grid">
-                                        <div className="data-item">
-                                                <span className="label">Name:</span>
-                                                <span className="value">{selectedProfile.name}</span>
-                                        </div>
-                                        <div className="data-item">
-                                                <span className="label">pH Range:</span>
-                                                <span className="value">{selectedProfile.phMin} - {selectedProfile.phMax}</span>
-                                        </div>
-                                        <div className="data-item">
-                                                <span className="label">Temp Range (°C):</span>
-                                                <span className="value">{selectedProfile.temperatureMin} - {selectedProfile.temperatureMax}</span>
-                                        </div>
-                                        <div className="data-item">
-                                                <span className="label">Light On/Off:</span>
-                                                <span className="value">{new Date(selectedProfile.lightOnTime).toLocaleString()} / {new Date(selectedProfile.lightOffTime).toLocaleString()}</span>
-                                        </div>
-                                        <div className="data-item">
-                                                <span className="label">Light Range:</span>
-                                                <span className="value">{selectedProfile.lightMin} - {selectedProfile.lightMax}</span>
-                                        </div>
-                                        <div className="data-item">
-                                                <span className="label">EC Range:</span>
-                                                <span className="value">{selectedProfile.ecMin} - {selectedProfile.ecMax}</span>
-                                        </div>
-                                </div>
-                        </DataCard>
-                    )}
+                    {selectedProfile && <DataCard profile={selectedProfile} />}
 
                     {showModal && (
-                        <ModalBackground>
-                                <FormContainer>
-                                        <CloseButton onClick={closeModal}>×</CloseButton>
-                                        <FormHeader>
-                                                {editingProfile ? `Edit Plant: ${editingProfile.name}` : "Add New Plant Profile"}
-                                        </FormHeader>
-
-                                        <FullWidthGroup>
-                                                <label>Plant Name</label>
-                                                <Input
-                                                    type="text"
-                                                    value={newProfile.name}
-                                                    onChange={(e) => setNewProfile({ ...newProfile, name: e.target.value })}
-                                                    placeholder="Plant Name"
-                                                />
-                                                {errors.name && <ErrorMessage>{errors.name}</ErrorMessage>}
-                                        </FullWidthGroup>
-
-                                        <TwoColumnRow>
-                                                <FormGroup>
-                                                        <label>pH Min</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.phMin}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, phMin: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                                <FormGroup>
-                                                        <label>pH Max</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.phMax}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, phMax: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                        </TwoColumnRow>
-
-                                        <TwoColumnRow>
-                                                <FormGroup>
-                                                        <label>Temp Min (°C)</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.temperatureMin}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, temperatureMin: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                                <FormGroup>
-                                                        <label>Temp Max (°C)</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.temperatureMax}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, temperatureMax: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                        </TwoColumnRow>
-
-                                        <TwoColumnRow>
-                                                <FormGroup>
-                                                        <label>Light On Time</label>
-                                                        <Input
-                                                            type="datetime-local"
-                                                            value={new Date(newProfile.lightOnTime).toISOString().slice(0,16)}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, lightOnTime: new Date(e.target.value).toISOString() })}
-                                                        />
-                                                </FormGroup>
-                                                <FormGroup>
-                                                        <label>Light Off Time</label>
-                                                        <Input
-                                                            type="datetime-local"
-                                                            value={new Date(newProfile.lightOffTime).toISOString().slice(0,16)}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, lightOffTime: new Date(e.target.value).toISOString() })}
-                                                        />
-                                                </FormGroup>
-                                        </TwoColumnRow>
-
-                                        <TwoColumnRow>
-                                                <FormGroup>
-                                                        <label>Light Min</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.lightMin}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, lightMin: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                                <FormGroup>
-                                                        <label>Light Max</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.lightMax}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, lightMax: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                        </TwoColumnRow>
-
-                                        <TwoColumnRow>
-                                                <FormGroup>
-                                                        <label>EC Min</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.ecMin}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, ecMin: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                                <FormGroup>
-                                                        <label>EC Max</label>
-                                                        <Input
-                                                            type="number"
-                                                            step="0.1"
-                                                            value={newProfile.ecMax}
-                                                            onChange={(e) => setNewProfile({ ...newProfile, ecMax: e.target.value })}
-                                                        />
-                                                </FormGroup>
-                                        </TwoColumnRow>
-
-                                        <SaveButton onClick={handleSave}>Save Changes</SaveButton>
-                                </FormContainer>
-                        </ModalBackground>
+                        <PlantForm
+                            profile={editingProfile}
+                            formData={newProfile}
+                            setFormData={setNewProfile}
+                            onClose={closeModal}
+                            onSave={handleSave}
+                            errors={errors}
+                        />
                     )}
             </PageContainer>
         );
