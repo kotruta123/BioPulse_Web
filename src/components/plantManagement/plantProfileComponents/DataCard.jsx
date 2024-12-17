@@ -1,19 +1,13 @@
+// DataCard.jsx
 import React from 'react';
-import {DataCard as StyledDataCard} from "../PlantStyles.js";
-import ParticlesBackground from "./ParticlesBackground.jsx";
+import { DataCard as StyledDataCard } from "../PlantStyles.js";
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 
-const DataCard = ({ profile }) => {
+const DataCard = ({ profile, onActivate }) => {
+    const isActive = profile.isActive;
+
     return (
         <StyledDataCard>
-            <ParticlesBackground
-                particleCount={40}
-                particleSpeed={0.5}
-                color={["#a1c4fd", "#c2e9fb"]}
-                opacity={0.2}
-                zIndex={0}
-                enableHoverEffect={false}
-                customStyle={{ filter: "blur(2px)" }}
-            />
             <h4>Current Profile Data</h4>
             <div className="data-grid">
                 <div className="data-item">
@@ -43,6 +37,27 @@ const DataCard = ({ profile }) => {
                     <span className="value">{profile.ecMin} - {profile.ecMax}</span>
                 </div>
             </div>
+            {!isActive ? (
+                <div style={{ marginTop: '20px', textAlign: 'center' }}>
+                    <button
+                        onClick={onActivate}
+                        style={{
+                            padding: '10px 20px',
+                            border: 'none',
+                            backgroundColor: '#4caf50',
+                            color: 'white',
+                            borderRadius: '8px',
+                            cursor: 'pointer'
+                        }}
+                    >
+                        Activate Profile
+                    </button>
+                </div>
+            ) : (
+                <div style={{ color: 'green', fontSize: '16px', marginTop: '20px', textAlign: 'center', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <CheckCircleIcon style={{ marginRight: '8px' }} /> This plant profile is active now.
+                </div>
+            )}
         </StyledDataCard>
     );
 };

@@ -52,3 +52,22 @@ export const activatePlantProfile = async (id) => {
         throw new Error("Failed to activate plant profile.");
     }
 };
+
+export const deactivatePlantProfile = async () => {
+    try {
+        const response = await axios.post(`${API_HOST}/deactivate`);
+        return response.data;
+    } catch (error) {
+        throw new Error("Failed to deactivate plant profile.");
+    }
+};
+
+export const getActivePlantProfile = async () => {
+    try {
+        const response = await axios.get(`${API_HOST}/active`);
+        return response.data;
+    } catch (error) {
+        throw new Error("Failed to fetch the active plant profile.");
+    }
+};
+

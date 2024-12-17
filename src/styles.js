@@ -78,7 +78,7 @@ export const IconButton = styled.div`
 `;
 
 export const ActiveIconButton = styled(IconButton)`
-    background-color: #33d69f;
+    background-color: transparent;
     color: white;
 `;
 

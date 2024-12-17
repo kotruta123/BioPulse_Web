@@ -1,10 +1,13 @@
-import React, {useEffect, useState} from "react";
-import {GlobalStyle, PageContainer,} from "./PlantStyles";
+// PlantManagement.jsx
+import React, { useEffect, useState } from "react";
+import { GlobalStyle, PageContainer } from "./PlantStyles";
 import {
         addPlantProfile,
         deletePlantProfile,
         getPlantProfiles,
-        updatePlantProfile
+        getActivePlantProfile,
+        updatePlantProfile,
+        activatePlantProfile
 } from "../../services/PlantService.jsx";
 import PlantGrid from "./plantProfileComponents/PlantGrid.jsx";
 import PlantForm from "./plantProfileComponents/PlantForm.jsx";
@@ -20,9 +23,9 @@ import ParticlesBackground from "./plantProfileComponents/ParticlesBackground.js
 
 const PlantManagement = () => {
         const [plantProfiles, setPlantProfiles] = useState([]);
+        const [activeProfile, setActiveProfile] = useState(null);
         const [newProfile, setNewProfile] = useState({
                 name: "",
-                isDefault: false,
                 phMin: 6.0,
                 phMax: 7.5,
                 temperatureMin: 22.0,
@@ -33,6 +36,7 @@ const PlantManagement = () => {
                 lightMax: 450.0,
                 ecMin: 1.5,
                 ecMax: 2.5,
+                imageUrl: "",
         });
         const predefinedImages = [basilImage, cabbageImage, lettuceImage, spinachImage, tomatoImage];
 
@@ -43,22 +47,52 @@ const PlantManagement = () => {
         const [successMessage, setSuccessMessage] = useState("");
         const [errorMessage, setErrorMessage] = useState("");
 
+        // Fetch plant profiles and active profile on component mount
         useEffect(() => {
-                const fetchProfiles = async () => {
-                        try {
-                                const profiles = await getPlantProfiles();
-                                const updatedProfiles = profiles.map((profile, index) => ({
-                                        ...profile,
-                                        imageUrl: profile.imageUrl || predefinedImages[index % predefinedImages.length] || strawberryImage,
-                                }));
-                                setPlantProfiles(updatedProfiles);
-                        } catch (error) {
-                                console.error("Error fetching plant profiles:", error);
-                        }
-                };
-                fetchProfiles();
+                fetchPlantProfiles();
         }, []);
 
+        // Fetch plant profiles
+        const fetchPlantProfiles = async () => {
+                try {
+                        const profiles = await getPlantProfiles();
+                        const updatedProfiles = profiles.map((profile, index) => ({
+                                ...profile,
+                                imageUrl: profile.imageUrl || predefinedImages[index % predefinedImages.length] || strawberryImage,
+                        }));
+                        setPlantProfiles(updatedProfiles);
+                        await fetchActiveProfile(updatedProfiles); // Fetch active profile after profiles are loaded
+                } catch (error) {
+                        console.error("Error fetching plant profiles:", error);
+                        setErrorMessage("Failed to fetch plant profiles.");
+                }
+        };
+
+        // Fetch the active plant profile
+        const fetchActiveProfile = async (profiles = plantProfiles) => {
+                try {
+                        const active = await getActivePlantProfile();
+                        setActiveProfile(active);
+                        // Update plantProfiles to reflect the active status
+                        const updatedProfiles = profiles.map((profile) => ({
+                                ...profile,
+                                isActive: active && profile.id === active.id,
+                        }));
+                        setPlantProfiles(updatedProfiles);
+                        setSelectedProfile(active); // Optionally select the active profile
+                } catch (error) {
+                        console.error("Error fetching active plant profile:", error);
+                        // It's possible there is no active profile, handle accordingly
+                        setActiveProfile(null);
+                        const updatedProfiles = profiles.map((profile) => ({
+                                ...profile,
+                                isActive: false,
+                        }));
+                        setPlantProfiles(updatedProfiles);
+                }
+        };
+
+        // Auto-hide success messages after 3 seconds
         useEffect(() => {
                 if (successMessage) {
                         const timer = setTimeout(() => setSuccessMessage(""), 3000);
@@ -66,6 +100,7 @@ const PlantManagement = () => {
                 }
         }, [successMessage]);
 
+        // Auto-hide error messages after 5 seconds
         useEffect(() => {
                 if (errorMessage) {
                         const timer = setTimeout(() => setErrorMessage(""), 5000);
@@ -73,10 +108,10 @@ const PlantManagement = () => {
                 }
         }, [errorMessage]);
 
+        // Reset form to initial state
         const resetForm = () => {
                 setNewProfile({
                         name: "",
-                        isDefault: false,
                         phMin: 6.0,
                         phMax: 7.5,
                         temperatureMin: 22.0,
@@ -87,21 +122,27 @@ const PlantManagement = () => {
                         lightMax: 450.0,
                         ecMin: 1.5,
                         ecMax: 2.5,
+                        imageUrl: "",
                 });
                 setEditingProfile(null);
                 setErrors({});
         };
 
+        // Handle clicking on a plant card
         const handleCardClick = (profile) => {
                 setSelectedProfile(profile);
         };
 
+        // Handle editing a plant profile
         const handleEdit = (profile) => {
+                if (profile.isDefault) {
+                        setErrorMessage("Default profiles cannot be edited.");
+                        return;
+                }
                 resetForm();
                 setEditingProfile(profile);
                 setNewProfile({
                         name: profile.name,
-                        isDefault: profile.isDefault,
                         phMin: profile.phMin,
                         phMax: profile.phMax,
                         temperatureMin: profile.temperatureMin,
@@ -112,17 +153,26 @@ const PlantManagement = () => {
                         lightMax: profile.lightMax,
                         ecMin: profile.ecMin,
                         ecMax: profile.ecMax,
-                        imageUrl: "",
+                        imageUrl: profile.imageUrl || "",
                 });
                 setShowModal(true);
         };
 
+        // Validate form inputs
         const validateForm = () => {
                 let formErrors = {};
-                if (!newProfile.name) formErrors.name = "Plant name is required.";
+                if (!newProfile.name.trim()) formErrors.name = "Plant name is required.";
+                if (isNaN(newProfile.phMin) || newProfile.phMin < 0 || newProfile.phMin > 14)
+                        formErrors.phMin = "pH Min must be between 0 and 14.";
+                if (isNaN(newProfile.phMax) || newProfile.phMax < 0 || newProfile.phMax > 14)
+                        formErrors.phMax = "pH Max must be between 0 and 14.";
+                if (parseFloat(newProfile.phMin) > parseFloat(newProfile.phMax))
+                        formErrors.phRange = "pH Min cannot be greater than pH Max.";
+                // Add more validations as needed (e.g., temperature, light, EC ranges)
                 return formErrors;
         };
 
+        // Handle saving (adding or updating) a plant profile
         const handleSave = async (e) => {
                 e.preventDefault();
                 const formErrors = validateForm();
@@ -132,8 +182,7 @@ const PlantManagement = () => {
                 }
 
                 const profileData = {
-                        name: newProfile.name,
-                        isDefault: newProfile.isDefault,
+                        name: newProfile.name.trim(),
                         phMin: parseFloat(newProfile.phMin),
                         phMax: parseFloat(newProfile.phMax),
                         temperatureMin: parseFloat(newProfile.temperatureMin),
@@ -157,13 +206,8 @@ const PlantManagement = () => {
                                 setSuccessMessage("Profile added successfully!");
                         }
 
-                        // Fetch updated plant profiles and assign image URLs
-                        const profiles = await getPlantProfiles();
-                        const updatedProfiles = profiles.map((profile, index) => ({
-                                ...profile,
-                                imageUrl: profile.imageUrl || predefinedImages[index % predefinedImages.length] || strawberryImage,
-                        }));
-                        setPlantProfiles(updatedProfiles);
+                        // Refresh profiles to reflect changes
+                        await fetchPlantProfiles();
 
                         resetForm();
                         setShowModal(false);
@@ -173,11 +217,18 @@ const PlantManagement = () => {
                 }
         };
 
+        // Handle deleting a plant profile
         const handleDeleteProfile = async (id) => {
                 try {
                         await deletePlantProfile(id);
-                        setPlantProfiles(plantProfiles.filter((profile) => profile.id !== id));
+                        const updatedProfiles = plantProfiles.filter((profile) => profile.id !== id);
+                        setPlantProfiles(updatedProfiles);
                         if (selectedProfile && selectedProfile.id === id) {
+                                setSelectedProfile(null);
+                        }
+                        // If the deleted profile was active, clear activeProfile
+                        if (activeProfile && activeProfile.id === id) {
+                                setActiveProfile(null);
                                 setSelectedProfile(null);
                         }
                         setSuccessMessage("Profile deleted successfully!");
@@ -187,14 +238,39 @@ const PlantManagement = () => {
                 }
         };
 
+        // Handle adding a new plant profile
         const handleAddNewPlant = () => {
                 resetForm();
                 setShowModal(true);
         };
 
+        // Close the modal form
         const closeModal = () => {
                 setShowModal(false);
                 resetForm();
+        };
+
+        // Handle activating a plant profile
+        const handleActivateProfile = async (profile) => {
+                try {
+                        await activatePlantProfile(profile.id);
+                        setSuccessMessage(`${profile.name} has been activated.`);
+
+                        // Update activeProfile state
+                        setActiveProfile(profile);
+
+                        // Update plantProfiles to reflect the active status
+                        const updatedProfiles = plantProfiles.map((p) => ({
+                                ...p,
+                                isActive: p.id === profile.id, // Only the selected profile is active
+                        }));
+
+                        setPlantProfiles(updatedProfiles);
+                        setSelectedProfile({ ...profile, isActive: true });
+                } catch (error) {
+                        console.error("Error activating plant profile:", error);
+                        setErrorMessage("Failed to activate the profile. Please try again.");
+                }
         };
 
         return (
@@ -212,7 +288,12 @@ const PlantManagement = () => {
                         onAddNewPlant={handleAddNewPlant}
                     />
 
-                    {selectedProfile && <DataCard profile={selectedProfile} />}
+                    {selectedProfile && (
+                        <DataCard
+                            profile={selectedProfile}
+                            onActivate={() => handleActivateProfile(selectedProfile)}
+                        />
+                    )}
 
                     {showModal && (
                         <PlantForm

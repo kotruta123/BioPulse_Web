@@ -263,3 +263,4 @@ export const PageContainer = styled.div`
     animation: ${gradientAnimation} 15s ease infinite, ${fadeIn} 0.5s ease forwards;
     position: relative;
 `;
+
