@@ -25,7 +25,7 @@ export const addPlantProfile = async (profileData) => {
 
 export const updatePlantProfile = async (profileData) => {
     try {
-        const response = await axios.put(API_HOST, profileData, {
+        const response = await axios.put(`${API_HOST}/${profileData.id}`, profileData, {
             headers: { "Content-Type": "application/json" },
         });
         return response.data;
@@ -40,5 +40,15 @@ export const deletePlantProfile = async (id) => {
         return response.data;
     } catch (error) {
         throw new Error("Failed to delete plant profile.");
+    }
+};
+
+// New service to activate a plant profile
+export const activatePlantProfile = async (id) => {
+    try {
+        const response = await axios.post(`${API_HOST}/${id}/activate`);
+        return response.data;
+    } catch (error) {
+        throw new Error("Failed to activate plant profile.");
     }
 };
