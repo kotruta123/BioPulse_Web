@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import styled, { keyframes, createGlobalStyle } from "styled-components";
 import { useNavigate } from "react-router-dom";
-import UserService from "../services/UserService";
-import { useAuth } from "../auth/AuthContext";
+import UserService from "../../services/UserService.jsx";
+import { useAuth } from "../../auth/AuthContext.jsx";
 
 // Global styles
 const GlobalStyle = createGlobalStyle`
@@ -257,7 +257,7 @@ const FormAdvice = styled.div`
     padding: 15px;
     font-size: 14px;
     color: #444;
-    display: ${props => props.visible ? 'block' : 'none'};
+    display: ${props => (props.visible ? "block" : "none")};
 `;
 
 const UserProfile = ({ userId }) => {
@@ -394,6 +394,7 @@ const UserProfile = ({ userId }) => {
             return;
         }
 
+
         try {
             // Old password verification happens server-side
             await UserService.updatePassword(userId, oldPassword, newPassword);
@@ -462,7 +463,6 @@ const UserProfile = ({ userId }) => {
                                 />
                                 <UserDetail><strong>Name:</strong> {userData.name}</UserDetail>
                                 <UserDetail><strong>Email:</strong> {userData.email}</UserDetail>
-                                <UserDetail><strong>Phone:</strong> {userData.phoneNumber || "N/A"}</UserDetail>
                                 <UserDetail><strong>Security Question:</strong> {userData.securityQuestion || "N/A"}</UserDetail>
 
                                 <ButtonRow>

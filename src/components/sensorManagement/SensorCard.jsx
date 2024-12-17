@@ -1,5 +1,5 @@
 import React from 'react';
-import { SensorCardContainer, SensorIcon, SensorValue, SensorStatus, SensorTitle } from '../styles';
+import { SensorCardContainer, SensorIcon, SensorValue, SensorStatus, SensorTitle } from '../../styles.js';
 import { Thermostat, WaterDrop, Opacity, LightMode, Science } from '@mui/icons-material';
 
 const getIcon = (title) => {

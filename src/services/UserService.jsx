@@ -59,14 +59,18 @@ const UserService = {
     },
 
     // Update user's password
-    updatePassword: async (id, newPassword) => {
+    updatePassword: async (id, oldPassword, newPassword) => {
         try {
-            const response = await axios.put(`${API_BASE_URL}/${id}/password`, { newPassword });
+            const response = await axios.put(`${API_BASE_URL}/${id}/password`, {
+                oldPassword,
+                newPassword
+            });
             return response.data;
         } catch (error) {
             throw new Error(error.response?.data || "Failed to update password.");
         }
     },
+
 
     // Update user's security question and answer
     updateSecurity: async (id, newSecurityQuestion, newSecurityAnswer) => {
