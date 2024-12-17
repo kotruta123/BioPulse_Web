@@ -101,9 +101,10 @@ export const Title = styled.h1`
     color: #333;
 `;
 
+
 export const WarningMessage = styled.div`
     background-color: #ffdddd;
-    color: #ff5b5b;
+    color: green;
     padding: 8px 15px;
     border-radius: 20px;
     font-size: 14px;
