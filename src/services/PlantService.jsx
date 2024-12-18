@@ -1,7 +1,7 @@
 // services/PlantProfileService.js
 import axios from "axios";
 
-const API_HOST = "http://localhost:5000/api/plant-profiles";
+const API_HOST = "http://10.154.220.92:5000/api/plant-profiles";
 
 export const getPlantProfiles = async () => {
     try {
