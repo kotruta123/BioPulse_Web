@@ -1,45 +1,51 @@
 // services/SensorService.jsx
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 
 const SensorServiceContext = createContext();
 
+const API_HOST = 'http://localhost:5000/api/sensors';
+
 export const SensorServiceProvider = ({ children }) => {
-    const [sensors, setSensors] = useState([
-        {
-            id: 1,
-            name: "Temperature Sensor",
-            isEnabled: true,
-            isWireless: true,
-            lastReading: "35.6°C",
-            lastReadingTime: "2024-12-08 10:00 AM",
-            address: "Room A1",
-            sensorType: "Temperature",
-        },
-    ]);
+    const [sensors, setSensors] = useState([]);
+    const [dashboardSensors, setDashboardSensors] = useState([]);
 
-    const addSensor = (sensor) =>
-        setSensors((prev) => [
-            ...prev,
-            { ...sensor, id: Date.now(), isEnabled: false, lastReading: "N/A", lastReadingTime: "N/A" },
-        ]);
+    // Fetch sensors from the backend on component mount
+    useEffect(() => {
+        fetchSensors();
+    }, []);
 
-    const editSensor = (id, updatedSensor) =>
-        setSensors((prev) =>
-            prev.map((sensor) => (sensor.id === id ? { ...sensor, ...updatedSensor } : sensor))
-        );
+    const fetchSensors = async () => {
+        try {
+            const response = await axios.get(API_HOST);
+            setSensors(response.data);
+        } catch (error) {
+            console.error('Failed to fetch sensors:', error);
+        }
+    };
 
-    const deleteSensor = (id) => setSensors((prev) => prev.filter((sensor) => sensor.id !== id));
+    const addToDashboard = (sensor) => {
+        setDashboardSensors((prev) => {
+            if (prev.find((s) => s.id === sensor.id)) {
+                return prev; // Sensor already in dashboard
+            }
+            return [...prev, sensor];
+        });
+    };
 
-    const toggleActivation = (id) =>
-        setSensors((prev) =>
-            prev.map((sensor) =>
-                sensor.id === id ? { ...sensor, isEnabled: !sensor.isEnabled } : sensor
-            )
-        );
+    const removeFromDashboard = (sensorId) => {
+        setDashboardSensors((prev) => prev.filter((s) => s.id !== sensorId));
+    };
 
     return (
         <SensorServiceContext.Provider
-            value={{ sensors, addSensor, editSensor, deleteSensor, toggleActivation }}
+            value={{
+                sensors,
+                dashboardSensors,
+                fetchSensors,
+                addToDashboard,
+                removeFromDashboard,
+            }}
         >
             {children}
         </SensorServiceContext.Provider>
