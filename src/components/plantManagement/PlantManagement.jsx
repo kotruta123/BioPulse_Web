@@ -171,8 +171,6 @@ const PlantManagement = () => {
                 // Add more validations as needed (e.g., temperature, light, EC ranges)
                 return formErrors;
         };
-
-        // Handle saving (adding or updating) a plant profile
         const handleSave = async (e) => {
                 e.preventDefault();
                 const formErrors = validateForm();
@@ -205,8 +203,6 @@ const PlantManagement = () => {
                                 await addPlantProfile(profileData);
                                 setSuccessMessage("Profile added successfully!");
                         }
-
-                        // Refresh profiles to reflect changes
                         await fetchPlantProfiles();
 
                         resetForm();
@@ -250,19 +246,16 @@ const PlantManagement = () => {
                 resetForm();
         };
 
-        // Handle activating a plant profile
         const handleActivateProfile = async (profile) => {
                 try {
                         await activatePlantProfile(profile.id);
                         setSuccessMessage(`${profile.name} has been activated.`);
 
-                        // Update activeProfile state
                         setActiveProfile(profile);
 
-                        // Update plantProfiles to reflect the active status
                         const updatedProfiles = plantProfiles.map((p) => ({
                                 ...p,
-                                isActive: p.id === profile.id, // Only the selected profile is active
+                                isActive: p.id === profile.id,
                         }));
 
                         setPlantProfiles(updatedProfiles);
