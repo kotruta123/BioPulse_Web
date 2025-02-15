@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const SensorServiceContext = createContext();
 
-const API_HOST = 'https://10.154.220.92:5000/api/sensors';
+const API_HOST = 'http://10.154.220.92:5000/api/sensors';
 
 export const SensorServiceProvider = ({ children }) => {
     const [sensors, setSensors] = useState([]);
