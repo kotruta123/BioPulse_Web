@@ -1,11 +1,9 @@
-// components/dashboard/DashboardContent.jsx
 import React, { useEffect, useState } from "react";
 import { useSensorService } from "../../services/SensorService.jsx";
 import SensorCard from "../sensorManagement/SensorCard.jsx";
 import StyledGaugeChart from "../sensorManagement/StyledGaugeChart.jsx";
 import ImageCarousel from "./ImageCarousel.jsx";
-import { SensorGrid, ContentContainer, RefreshButton, Button } from "../../styles.js";
-import RefreshIcon from "@mui/icons-material/Refresh";
+import { SensorGrid, ContentContainer } from "../../styles.js";
 import { toast } from 'react-toastify';
 import * as PlantService from "../../services/PlantService.jsx";
 
@@ -50,16 +48,15 @@ const DashboardContent = () => {
 
     useEffect(() => {
         initializeDashboard();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Run only once on mount
 
-    const handleRefresh = async () => {
-        setLoading(true);
-        await fetchActivePlantProfile();
-        fetchSensorReadings();
-        setLoading(false);
-        toast.info("Dashboard data refreshed.");
-    };
+        // Set up polling for sensor data
+        const intervalId = setInterval(() => {
+            fetchSensorReadings();
+        }, 5000); // Fetch data every 5 seconds
+
+        // Clean up interval on component unmount
+        return () => clearInterval(intervalId);
+    }, [dashboardSensors]); // Re-run effect if dashboardSensors changes
 
     const handleRemoveFromDashboard = (sensorId) => {
         removeFromDashboard(sensorId);
@@ -127,12 +124,6 @@ const DashboardContent = () => {
 
     return (
         <ContentContainer>
-            <div style={{ textAlign: "right", padding: "10px" }}>
-                <RefreshButton onClick={handleRefresh}>
-                    <RefreshIcon /> Refresh
-                </RefreshButton>
-            </div>
-
             <h2>Dashboard</h2>
             <SensorGrid>
                 {dashboardSensors.map((sensor) => {

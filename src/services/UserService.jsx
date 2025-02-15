@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_BASE_URL = "https://10.154.220.92:5000/api/users";
+const API_BASE_URL = "http://10.154.220.92:5000/api/users";
 
 const UserService = {
     authenticateUser: async (email, password) => {

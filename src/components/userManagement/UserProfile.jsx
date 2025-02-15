@@ -458,13 +458,11 @@ const UserProfile = ({ userId }) => {
                         userData && (
                             <>
                                 <ProfileImage
-                                    src="https://png.pngtree.com/png-vector/20221203/ourmid/pngtree-cartoon-style-female-user-profile-icon-vector-illustraton-png-image_6489286.png"
+                                    src="https://randomuser.me/api/portraits/men/32.jpg"
                                     alt="User Profile"
                                 />
                                 <UserDetail><strong>Name:</strong> {userData.name}</UserDetail>
                                 <UserDetail><strong>Email:</strong> {userData.email}</UserDetail>
-                                <UserDetail><strong>Security Question:</strong> {userData.securityQuestion || "N/A"}</UserDetail>
-
                                 <ButtonRow>
                                     <ToggleButton onClick={toggleEmailForm} open={showEmailForm}>
                                         📧 Change Email
